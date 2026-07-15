@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>SIGA · VPQ — Painel de Coleta | Via Parque Shopping</title>
 <link rel="manifest" href="./manifest.webmanifest">
-<meta name="theme-color" content="#293B2F">
+<meta name="theme-color" content="#0F2419">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -20,6 +20,7 @@
   --g-dark:#293B2F; --g-mid:#3E5746; --g-52:#52765F; --g-7d:#7D9886;
   --g-d2:#D2DED5; --g-eef:#EEF1EF; --gold:#C9A227; --gray:#7F7F7F;
   --red:#B33A3A;
+  --lime:#A8D22D; --siga-bg:#0F2419;
   --bg:#F4F6F4; --card:#FFFFFF; --ink:#20281F; --line:#E1E6E1;
   --shadow:0 1px 2px rgba(41,59,47,.06),0 4px 16px rgba(41,59,47,.06);
 }
@@ -30,7 +31,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--i
 button{font-family:inherit;cursor:pointer;border:none;background:none}
 .wrap{max-width:640px;margin:0 auto;padding:0 14px}
 .eyebrow{font-size:12px;letter-spacing:.14em;font-weight:700;color:var(--g-7d);text-transform:uppercase}
-.gold-line{height:3px;width:52px;background:var(--gold);border-radius:2px;margin:14px 0 22px}
+.gold-line{height:3px;width:52px;background:var(--lime);border-radius:2px;margin:14px 0 22px}
 
 /* ---------- BOOT ---------- */
 #boot{position:fixed;inset:0;background:var(--g-dark);z-index:60;display:flex;
@@ -364,6 +365,71 @@ header.show{display:block}
   padding:13px 16px;font-size:13px;font-weight:700;display:none;align-items:center;gap:10px}
 .up-bar.show{display:flex}
 .up-bar .spin{width:15px;height:15px;border-width:2px}
+/* ---------- SPLASH (marca SIGA · VPQ — animação de 5 tempos) ---------- */
+#splash{position:fixed;inset:0;background:var(--siga-bg);z-index:70;display:flex;
+  flex-direction:column;align-items:center;justify-content:center}
+#splash.out{animation:fadeOut .5s ease forwards}
+@keyframes fadeOut{to{opacity:0;visibility:hidden}}
+.lockup{display:flex;align-items:center;gap:20px}
+/* 1 — surge o S */
+.sp-mono{height:96px;opacity:0;transform:scale(.72) translateY(14px);
+  animation:monoIn .75s cubic-bezier(.2,.9,.25,1) .1s forwards}
+@keyframes monoIn{to{opacity:1;transform:none}}
+/* 2 — a linha traça a divisão */
+.sp-div{width:2px;height:0;background:var(--lime);transform:skewX(-12deg);opacity:.9;
+  animation:divDraw .45s cubic-bezier(.4,0,.2,1) .75s forwards}
+@keyframes divDraw{to{height:104px}}
+/* 3 e 4 — as letras surgem na diagonal e o nome se forma */
+.sp-words{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.sp-siga{height:44px;opacity:0;transform:translate(-26px,20px) skewX(-10deg);
+  animation:wordIn .6s cubic-bezier(.2,.9,.25,1) 1.1s forwards}
+@keyframes wordIn{to{opacity:1;transform:none}}
+/* 5 — VPQ aparece e finaliza */
+.sp-vpq{height:13px;opacity:0;transform:translateX(-12px);
+  animation:vpqIn .45s ease-out 1.6s forwards}
+@keyframes vpqIn{to{opacity:1;transform:none}}
+.sp-tag{margin-top:22px;font-size:11.5px;font-weight:600;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--g-7d);opacity:0;animation:fadeIn .5s 1.9s forwards}
+.sp-tag b{color:var(--lime);font-weight:800}
+@keyframes fadeIn{to{opacity:1}}
+.parts{position:absolute;bottom:36px;display:flex;align-items:center;gap:18px;opacity:0;
+  animation:fadeIn .6s 2.1s forwards}
+.parts .pdiv{width:1px;height:20px;background:rgba(255,255,255,.16)}
+.wm{height:22px;opacity:.85}
+.wm-t{font-size:12px;font-weight:800;color:var(--g-d2);letter-spacing:.1em;text-transform:uppercase}
+/* boas-vindas */
+#welcome .box{max-width:440px}
+.wl-mark{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.wl-mark img{height:40px}
+.wl-mark .wt{font-size:19px;font-weight:800;color:#fff;line-height:1.1}
+.wl-mark .ws{font-size:10.5px;color:var(--lime);font-weight:700;letter-spacing:.08em}
+#welcome h1{font-size:27px;margin-bottom:8px}
+.wl-p{color:var(--g-d2);font-size:14.5px;line-height:1.55;margin-bottom:22px}
+.feat{display:flex;gap:12px;align-items:flex-start;margin-bottom:15px}
+.feat .fi{width:36px;height:36px;border-radius:10px;background:rgba(168,210,45,.12);
+  color:var(--lime);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.feat .ft{font-size:14px;font-weight:700;color:#fff}
+.feat .fd{font-size:12.5px;color:var(--g-7d);line-height:1.45;margin-top:2px}
+.wl-ft{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:26px;
+  padding-top:18px;border-top:1px solid rgba(255,255,255,.1)}
+.wl-ft img{height:18px;opacity:.7}
+
+/* ---------- PERFIL ---------- */
+.av-wrap{display:flex;flex-direction:column;align-items:center;gap:11px;margin:6px 0 4px}
+.av-big{width:96px;height:96px;border-radius:50%;background:var(--g-52);display:flex;
+  align-items:center;justify-content:center;font-size:36px;font-weight:800;color:#fff;
+  overflow:hidden;position:relative;border:3px solid rgba(255,255,255,.14)}
+.av-big img{width:100%;height:100%;object-fit:cover}
+.av-edit{background:rgba(255,255,255,.09);color:var(--g-d2);font-size:12.5px;font-weight:700;
+  padding:8px 14px;border-radius:20px;display:flex;align-items:center;gap:6px}
+.av-edit:active{background:rgba(255,255,255,.18)}
+.pf-ro{background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.09);
+  border-radius:12px;padding:13px;color:var(--g-d2);font-size:15px}
+.pf-ro b{color:#fff;font-weight:700}
+.calc{font-size:12px;color:var(--gold);font-weight:700;margin-top:6px}
+.pf-ok{background:rgba(125,152,134,.2);color:#DCEadd;border-radius:10px;padding:10px 13px;
+  font-size:13px;font-weight:700;margin-top:14px;display:none;text-align:center}
+.pf-ok.show{display:block}
 svg{display:block}
 </style>
 </head>
@@ -371,10 +437,90 @@ svg{display:block}
 
 <div id="boot"><div class="spin"></div><div class="bt">Carregando SIGA · VPQ…</div></div>
 
+<!-- SPLASH -->
+<div id="splash" style="display:none">
+  <div class="lockup">
+    <img class="sp-mono" id="spMono" src="./mark-mono.png" alt="SIGA">
+    <div class="sp-div"></div>
+    <div class="sp-words">
+      <img class="sp-siga" src="./mark-siga.png" alt="siga">
+      <img class="sp-vpq" src="./mark-vpq.png" alt="VPQ">
+    </div>
+  </div>
+  <div class="sp-tag">Sistema Integrado de Gestão da <b>Auditoria</b></div>
+  <div class="parts">
+    <img class="wm" id="wmVpq" src="./logo-viaparque.png" alt="Via Parque">
+    <span class="wm-t" id="wmVpqT" style="display:none">Via Parque</span>
+    <div class="pdiv"></div>
+    <img class="wm" id="wmAlq" src="./logo-alqia.png" alt="Alqia">
+    <span class="wm-t" id="wmAlqT" style="display:none">Alqia</span>
+  </div>
+</div>
+
+<!-- BOAS-VINDAS -->
+<div class="screen" id="welcome">
+  <div class="box">
+    <div class="wl-mark">
+      <img src="./mark-mono.png" alt="SIGA">
+      <div><div class="wt">SIGA · VPQ</div><div class="ws">SISTEMA INTEGRADO DE GESTÃO DA AUDITORIA</div></div>
+    </div>
+    <h1>Bem-vindo</h1>
+    <div class="wl-p">O sistema de coleta de vendas da Auditoria. Rota, marcação e evidência
+      num só lugar — sem planilha, sem grupo, sem perder registro.</div>
+
+    <div class="feat"><div class="fi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+      <div><div class="ft">Rota na palma da mão</div><div class="fd">Toque na loja para marcar coletado ou impedimento. O horário fica registrado sozinho.</div></div></div>
+
+    <div class="feat"><div class="fi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+      <div><div class="ft">Evidência no ato</div><div class="fd">Foto do POS ou do Sistema direto pelo app, organizada por mês, dia e loja.</div></div></div>
+
+    <div class="feat"><div class="fi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6a3 3 0 10-2.8-4M6 15a3 3 0 100-6 3 3 0 000 6zM18 21a3 3 0 10.001-5.999A3 3 0 0018 21zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></div>
+      <div><div class="ft">Funciona sem sinal</div><div class="fd">A marcação salva no aparelho e sobe sozinha quando a internet volta.</div></div></div>
+
+    <button class="pbtn" id="wlBtn">Acessar o sistema</button>
+    <div class="wl-ft">
+      <img src="./logo-viaparque.png" alt="Via Parque">
+      <div class="pdiv" style="height:14px"></div>
+      <img src="./logo-alqia.png" alt="Alqia">
+    </div>
+  </div>
+</div>
+
+<!-- PERFIL -->
+<div class="screen" id="perfil">
+  <div class="box">
+    <div class="eyebrow">Meu perfil</div>
+    <div class="gold-line" style="margin:12px 0 18px"></div>
+    <div class="av-wrap">
+      <div class="av-big" id="pfAv">?</div>
+      <button class="av-edit" id="pfAvBtn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Alterar foto
+      </button>
+    </div>
+    <div class="field-label">Nome</div>
+    <div class="pf-ro"><b id="pfNome">—</b></div>
+    <div class="field-label">Função</div>
+    <div class="pf-ro" id="pfFuncao">—</div>
+    <div class="field-label">Telefone</div>
+    <input class="in" id="pfTel" type="tel" inputmode="tel" placeholder="(21) 90000-0000">
+    <div class="field-label">Data de nascimento</div>
+    <input class="in" id="pfNasc" type="date">
+    <div class="calc" id="pfIdade"></div>
+    <div class="field-label">Entrada na empresa</div>
+    <input class="in" id="pfAdm" type="date">
+    <div class="calc" id="pfCasa"></div>
+    <div class="pf-ok" id="pfOk">✓ Perfil salvo</div>
+    <button class="pbtn" id="pfSave"><span class="spin"></span><span id="pfSaveLbl">Salvar perfil</span></button>
+    <button class="linkbtn" id="pfBack">Voltar</button>
+  </div>
+</div>
+<input type="file" id="avIn" accept="image/*" style="display:none">
+
 <!-- LOGIN -->
 <div class="screen" id="login">
   <div class="box">
-    <div class="eyebrow">Auditoria • Via Parque Shopping</div>
+    <img src="./mark-mono.png" alt="SIGA" style="height:56px;margin-bottom:14px">
     <h1>SIGA · VPQ</h1>
     <div class="sub">Painel de Coleta — acesso da equipe</div>
     <div class="gold-line"></div>
@@ -402,7 +548,8 @@ svg{display:block}
     <input type="date" id="dateIn" class="in">
     <button class="pbtn" id="startBtn" disabled><span class="spin"></span><span id="startLbl">Iniciar coleta</span></button>
     <div class="hint" id="resumeHint"></div>
-    <button class="linkbtn" id="logoutSetup">Sair da conta</button>
+    <button class="linkbtn" id="perfilSetup" style="margin-top:14px">Meu perfil</button>
+    <button class="linkbtn" id="logoutSetup" style="margin-top:2px">Sair da conta</button>
   </div>
 </div>
 
@@ -529,7 +676,7 @@ svg{display:block}
     </button>
     <button class="wa-btn" id="waBtn">
       <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.5A10 10 0 1012 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-2.9.9.9-2.8-.2-.3A8.2 8.2 0 1112 20.2z"/></svg>
-      Enviar resumo ao coordenador
+      Enviar resumo ao Administrativo
     </button>
     <button class="copy-btn" id="copyBtn">Copiar texto do resumo</button>
     <button class="danger" id="resetBtn">Zerar marcações deste turno</button>
@@ -623,7 +770,7 @@ setInterval(flush, 20000);
 
 /* ================= AUTH ================= */
 async function loadProfile(uid){
-  const {data}=await sb.from("profiles").select("id,nome,funcao,papel").eq("id",uid).single();
+  const {data}=await sb.from("profiles").select("*").eq("id",uid).single();
   return data;
 }
 $("loginBtn").onclick=async()=>{
@@ -927,6 +1074,10 @@ const hm=iso=>new Date(iso).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2
 async function openAdmin(){
   ["header","bottom","setup"].forEach(hide); $("main").style.display="none";
   $("admAv").textContent=initials(current.nome);
+  $("admAv").style.cursor="pointer";
+  $("admAv").onclick=()=>openPerfil("admin");
+  if(current.avatar_path){ avatarUrl(current.id,current.avatar_path).then(u=>{
+    if(u) $("admAv").innerHTML=`<img src="${u}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:12px">`; }); }
   $("admNm").textContent=current.nome; $("admRl").textContent=current.funcao;
   const d=$("admDate"); d.value=admDate;
   d.onchange=()=>{ admDate=d.value; loadAdmin(); };
@@ -1269,14 +1420,116 @@ $("resetBtn").onclick=async()=>{
   state={marks:{},check:{},collapsed:{}}; saveLocal(); render(); updateHeader(); closeSheet();
 };
 
+/* ================= PERFIL ================= */
+const AV_BUCKET="avatars";
+let avCache={};   // {user_id: signedUrl}
+
+function idadeDe(d){ if(!d) return null;
+  const n=new Date(d+"T00:00"), h=new Date();
+  let a=h.getFullYear()-n.getFullYear();
+  const m=h.getMonth()-n.getMonth();
+  if(m<0||(m===0&&h.getDate()<n.getDate())) a--;
+  return a>=0&&a<130?a:null; }
+function tempoDe(d){ if(!d) return null;
+  const e=new Date(d+"T00:00"), h=new Date();
+  if(e>h) return null;
+  let a=h.getFullYear()-e.getFullYear(), m=h.getMonth()-e.getMonth();
+  if(h.getDate()<e.getDate()) m--;
+  if(m<0){ a--; m+=12; }
+  const pa=a?`${a} ano${a>1?"s":""}`:"", pm=m?`${m} mês${m>1?"es":""}`:"";
+  return [pa,pm].filter(Boolean).join(" e ") || "menos de 1 mês"; }
+
+async function avatarUrl(uid,path){
+  if(!path) return null;
+  if(avCache[uid]) return avCache[uid];
+  const {data}=await sb.storage.from(AV_BUCKET).createSignedUrl(path,3600);
+  if(data?.signedUrl){ avCache[uid]=data.signedUrl; return data.signedUrl; }
+  return null;
+}
+async function openPerfil(from){
+  pfFrom=from||"setup";
+  ["setup","admin","header","bottom","evid"].forEach(hide); $("main").style.display="none";
+  const {data}=await sb.from("profiles").select("*").eq("id",current.id).single();
+  const p=data||current;
+  $("pfNome").textContent=p.nome||"—";
+  $("pfFuncao").textContent=p.funcao||"—";
+  $("pfTel").value=p.telefone||"";
+  $("pfNasc").value=p.nascimento||"";
+  $("pfAdm").value=p.admissao||"";
+  calcPerfil();
+  const av=$("pfAv"); av.textContent=initials(p.nome);
+  if(p.avatar_path){ const u=await avatarUrl(current.id,p.avatar_path);
+    if(u) av.innerHTML=`<img src="${u}" alt="">`; }
+  $("pfOk").classList.remove("show");
+  show("perfil"); window.scrollTo(0,0);
+}
+let pfFrom="setup";
+function calcPerfil(){
+  const i=idadeDe($("pfNasc").value);
+  $("pfIdade").textContent = i!==null ? `${i} anos` : "";
+  const t=tempoDe($("pfAdm").value);
+  $("pfCasa").textContent = t ? `${t} de casa` : "";
+}
+$("pfNasc").onchange=calcPerfil; $("pfAdm").onchange=calcPerfil;
+$("pfBack").onclick=()=>{ hide("perfil"); if(pfFrom==="admin") openAdmin(); else openSetup(); };
+$("perfilSetup").onclick=()=>openPerfil("setup");
+$("pfSave").onclick=async()=>{
+  const b=$("pfSave"); b.classList.add("loading"); b.disabled=true; $("pfSaveLbl").textContent="Salvando…";
+  const {error}=await sb.from("profiles").update({
+    telefone:$("pfTel").value.trim()||null,
+    nascimento:$("pfNasc").value||null,
+    admissao:$("pfAdm").value||null
+  }).eq("id",current.id);
+  b.classList.remove("loading"); b.disabled=false; $("pfSaveLbl").textContent="Salvar perfil";
+  if(error){ alert("Não foi possível salvar. Verifique a conexão."); return; }
+  $("pfOk").classList.add("show"); setTimeout(()=>$("pfOk").classList.remove("show"),2200);
+};
+/* foto de perfil */
+$("pfAvBtn").onclick=()=>{ $("avIn").value=""; $("avIn").click(); };
+$("avIn").onchange=async e=>{
+  const f=e.target.files?.[0]; if(!f) return;
+  if(!navigator.onLine){ alert("Sem conexão. A foto precisa de internet para subir."); return; }
+  const b=$("pfAvBtn"); b.textContent="Enviando…";
+  try{
+    const blob=await compress(f,320,.8);
+    const path=`${current.id}/avatar.jpg`;
+    const up=await sb.storage.from(AV_BUCKET).upload(path,blob,{contentType:"image/jpeg",upsert:true});
+    if(up.error) throw up.error;
+    await sb.from("profiles").update({avatar_path:path}).eq("id",current.id);
+    delete avCache[current.id];
+    const {data}=await sb.storage.from(AV_BUCKET).createSignedUrl(path,3600);
+    if(data?.signedUrl){ avCache[current.id]=data.signedUrl;
+      $("pfAv").innerHTML=`<img src="${data.signedUrl}" alt="">`; }
+    b.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M20 6L9 17l-5-5"/></svg> Foto atualizada`;
+    setTimeout(()=>b.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg> Alterar foto`,1800);
+  }catch(err){ b.textContent="Falha ao enviar"; setTimeout(()=>b.textContent="Alterar foto",1800); }
+};
+
 /* ================= BOOT ================= */
+$("wlBtn").onclick=()=>{ hide("welcome"); show("login"); };
+
+/* usa o logo real se existir na pasta; senão, mostra o nome em texto */
+["wmVpq","wmAlq"].forEach(id=>{
+  const img=$(id), txt=$(id+"T");
+  img.onerror=()=>{ img.style.display="none"; txt.style.display="inline"; };
+});
+
+function playSplash(){
+  return new Promise(res=>{
+    const s=$("splash"); s.style.display="flex";
+    setTimeout(()=>{ s.classList.add("out"); setTimeout(()=>{ s.style.display="none"; res(); },480); },3050);
+  });
+}
+
 (async function(){
   const {data:{session}}=await sb.auth.getSession();
   if(session){
     const prof=await loadProfile(session.user.id);
     if(prof){ current=prof; loadQueue(); $("boot").classList.add("hide"); routeUser(); return; }
   }
-  $("boot").classList.add("hide"); show("login");
+  $("boot").classList.add("hide");
+  await playSplash();
+  show("welcome");
 })();
 
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }

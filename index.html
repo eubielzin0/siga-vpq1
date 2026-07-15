@@ -234,6 +234,62 @@ header.show{display:block}
   padding:15px;display:flex;flex-direction:column;gap:2px}
 .rt-btn:active{transform:scale(.97)}
 .rt-btn small{font-weight:500;font-size:11.5px;color:var(--g-d2)}
+
+/* --- admin: header, abas, ao vivo --- */
+.adm-hd .ab{flex:1;min-width:0}
+.live{flex:0 0 auto;display:flex;align-items:center;gap:6px;font-size:10px;font-weight:800;
+  letter-spacing:.08em;color:#BFE6CC;background:rgba(127,214,160,.16);padding:5px 9px;border-radius:20px}
+.live .ld{width:6px;height:6px;border-radius:50%;background:#7FD6A0;animation:bl 1.6s infinite}
+.live.off{color:var(--g-d2);background:rgba(255,255,255,.1)}
+.live.off .ld{background:var(--gray);animation:none}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.25}}
+.adm-date-row{margin-top:14px}
+.adm-date{width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.14);
+  color:#fff;border-radius:11px;padding:11px 13px;font-size:14px;font-family:inherit}
+.tabs{display:flex;gap:6px;margin-top:14px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;background:rgba(255,255,255,.07);color:var(--g-d2);font-size:13px;font-weight:700;
+  padding:9px 14px;border-radius:20px;white-space:nowrap;transition:.15s}
+.tab.on{background:var(--gold);color:#3a2f05}
+/* --- admin: conteúdo --- */
+.akpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}
+.akpi{background:#fff;border-radius:14px;padding:15px;box-shadow:var(--shadow)}
+.akpi b{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;display:block;color:var(--g-dark)}
+.akpi small{font-size:11px;color:var(--gray);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.akpi.c b{color:var(--g-52)} .akpi.i b{color:var(--red)} .akpi.g b{color:var(--gold)}
+.acard{background:#fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden;margin:12px 0}
+.ahd{display:flex;align-items:center;gap:11px;padding:13px 15px;background:var(--g-eef)}
+.ahd .an{flex:1;font-weight:800;font-size:14.5px;color:var(--g-dark)}
+.ahd .ap{font-size:11.5px;font-weight:700;color:var(--g-52);background:#fff;padding:3px 9px;border-radius:20px}
+.bar{height:7px;background:var(--g-eef);border-radius:5px;overflow:hidden;display:flex}
+.bar .bc{background:var(--g-52)} .bar .bi{background:var(--red)}
+.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:13px 15px}
+.mini div{text-align:center}
+.mini b{font-size:17px;font-weight:800;display:block;font-variant-numeric:tabular-nums}
+.mini small{font-size:10px;color:var(--gray);font-weight:700;text-transform:uppercase}
+.mini .mc b{color:var(--g-52)} .mini .mi b{color:var(--red)} .mini .mh b{color:var(--g-dark)}
+.lrow{display:flex;align-items:center;gap:10px;padding:11px 15px;border-top:1px solid var(--line);font-size:13.5px}
+.lrow .ln{flex:1;font-weight:600}
+.lrow .lw{font-size:11.5px;color:var(--gray);font-variant-numeric:tabular-nums}
+.lrow .ls{font-size:10.5px;font-weight:800;text-transform:uppercase;padding:3px 8px;border-radius:20px}
+.ls.c{background:#E7F0EA;color:var(--g-52)} .ls.i{background:#FCECEC;color:var(--red)}
+.ls.p{background:var(--g-eef);color:var(--gray)}
+.empty{text-align:center;padding:34px 18px;color:var(--gray);font-size:13.5px}
+.empty b{display:block;color:var(--g-mid);font-size:15px;margin-bottom:5px}
+.fin{font-size:11px;font-weight:800;text-transform:uppercase;padding:3px 8px;border-radius:20px;
+  background:var(--g-52);color:#fff}
+.fin.no{background:var(--g-eef);color:var(--gray)}
+.seg{display:flex;gap:6px;margin:14px 0 4px}
+.seg button{flex:1;background:#fff;border:1.5px solid var(--line);color:var(--g-mid);font-weight:700;
+  font-size:13px;padding:9px;border-radius:10px}
+.seg button.on{background:var(--g-52);border-color:var(--g-52);color:#fff}
+.fin-btn{width:100%;background:var(--g-dark);color:#fff;font-weight:800;font-size:15.5px;border-radius:13px;
+  padding:16px;display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:10px}
+.fin-btn:active{transform:scale(.98)}
+.fin-btn:disabled{opacity:.5}
+.fin-ok{background:#E7F0EA;color:var(--g-52);border-radius:12px;padding:12px;text-align:center;
+  font-size:13px;font-weight:700;margin-bottom:10px;display:none}
+.fin-ok.show{display:block}
 svg{display:block}
 </style>
 </head>
@@ -281,24 +337,21 @@ svg{display:block}
   <div class="adm-hd">
     <div class="top">
       <div class="av" id="admAv">G</div>
-      <div><div class="nm" id="admNm">Gabriel</div><div class="rl" id="admRl">Coordenação (Admin)</div></div>
+      <div class="ab"><div class="nm" id="admNm">Gabriel</div><div class="rl" id="admRl">Coordenação</div></div>
+      <div class="live" id="admLive"><span class="ld"></span>AO VIVO</div>
+    </div>
+    <div class="adm-date-row">
+      <input type="date" id="admDate" class="adm-date">
+    </div>
+    <div class="tabs" id="admTabs">
+      <button class="tab on" data-v="consolidado">Consolidado</button>
+      <button class="tab" data-v="coleta">Coleta</button>
+      <button class="tab" data-v="auditores">Auditores</button>
+      <button class="tab" data-v="evidencias">Evidências</button>
     </div>
   </div>
-  <div class="wrap">
-    <div class="note">
-      <b>Fase 1 concluída:</b> login real e coleta gravando na nuvem.
-      O painel ao vivo segmentado (Coleta / Auditores / Consolidado) e a aba de Evidências
-      entram nas Fases 2 e 3.
-    </div>
-    <div class="section-tt">Equipe e funções</div>
-    <div class="card" id="teamCard"></div>
-    <div class="section-tt">Abrir rota</div>
-    <div class="rt-btns">
-      <button class="rt-btn" data-route="L1"><span>Rota L1</span><small>60 lojas • 6 blocos</small></button>
-      <button class="rt-btn" data-route="L2"><span>Rota L2</span><small>27 lojas • 3 blocos</small></button>
-    </div>
-    <button class="danger" id="logoutAdm" style="margin-top:22px">Sair da conta</button>
-  </div>
+  <div class="wrap" id="admView"></div>
+  <div class="wrap"><button class="danger" id="logoutAdm" style="margin:22px 0 30px">Sair da conta</button></div>
 </div>
 
 <!-- HEADER -->
@@ -350,6 +403,11 @@ svg{display:block}
     </div>
     <div class="sheet-sec">Impedimentos e pendências</div>
     <div class="imp-list" id="impList"></div>
+    <div class="fin-ok" id="finOk">✓ Turno finalizado e enviado ao coordenador.</div>
+    <button class="fin-btn" id="finBtn">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      <span id="finLbl">Finalizar e enviar turno</span>
+    </button>
     <button class="wa-btn" id="waBtn">
       <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.5A10 10 0 1012 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-2.9.9.9-2.8-.2-.3A8.2 8.2 0 1112 20.2z"/></svg>
       Enviar resumo ao coordenador
@@ -427,6 +485,9 @@ async function flush(){
     try{
       if(op.t==="up"){
         const {error}=await sb.from("coletas").upsert(op.row,{onConflict:"auditor_id,rota,data,loja"});
+        if(error) throw error;
+      } else if(op.t==="turno"){
+        const {error}=await sb.from("turnos").upsert(op.row,{onConflict:"auditor_id,rota,data"});
         if(error) throw error;
       } else {
         const {error}=await sb.from("coletas").delete()
@@ -521,24 +582,170 @@ async function start(fromAdmin){
   render(); updateHeader(); startClock(); setSync(); flush(); window.scrollTo(0,0);
 }
 
-/* ================= ADMIN ================= */
+/* ================= ADMIN (painel ao vivo) ================= */
+let admView="consolidado", admDate=new Date().toISOString().slice(0,10);
+let admData={coletas:[],turnos:[],equipe:[]}, admChan=null, admSegRota="todas";
+const routeTotal=r=>ROUTES[r]?ROUTES[r].reduce((a,b)=>a+b.s.length,0):0;
+const hm=iso=>new Date(iso).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+
 async function openAdmin(){
   ["header","bottom","setup"].forEach(hide); $("main").style.display="none";
   $("admAv").textContent=initials(current.nome);
   $("admNm").textContent=current.nome; $("admRl").textContent=current.funcao;
-  const tc=$("teamCard"); tc.innerHTML=`<div class="trow"><div class="tb"><div class="tr">Carregando equipe…</div></div></div>`;
-  const {data}=await sb.from("profiles").select("nome,funcao,papel").eq("papel","auditor").order("nome");
-  tc.innerHTML="";
-  (data||[]).forEach(u=>{
-    const row=document.createElement("div"); row.className="trow";
-    row.innerHTML=`<div class="av">${initials(u.nome)}</div>
-      <div class="tb"><div class="tn">${u.nome}</div><div class="tr">${u.funcao}</div></div>`;
-    tc.appendChild(row);
-  });
-  [...document.querySelectorAll("#admin .rt-btn")].forEach(b=>{
-    b.onclick=()=>{ sel.route=b.dataset.route; sel.date=new Date().toISOString().slice(0,10); start(true); };
+  const d=$("admDate"); d.value=admDate;
+  d.onchange=()=>{ admDate=d.value; loadAdmin(); };
+  [...document.querySelectorAll("#admTabs .tab")].forEach(b=>{
+    b.classList.toggle("on", b.dataset.v===admView);
+    b.onclick=()=>{ admView=b.dataset.v;
+      [...document.querySelectorAll("#admTabs .tab")].forEach(x=>x.classList.toggle("on",x===b));
+      renderAdmin(); };
   });
   show("admin"); window.scrollTo(0,0);
+  await loadAdmin(); subscribeLive();
+}
+
+async function loadAdmin(){
+  $("admView").innerHTML=`<div class="empty">Carregando…</div>`;
+  const [c,t,e]=await Promise.all([
+    sb.from("coletas").select("auditor_id,auditor_nome,rota,data,loja,status,motivo,marcado_em").eq("data",admDate),
+    sb.from("turnos").select("*").eq("data",admDate),
+    sb.from("profiles").select("id,nome,funcao,papel").eq("papel","auditor").order("nome")
+  ]);
+  admData={coletas:c.data||[], turnos:t.data||[], equipe:e.data||[]};
+  renderAdmin();
+}
+
+function subscribeLive(){
+  if(admChan) return;
+  admChan=sb.channel("siga-live")
+    .on("postgres_changes",{event:"*",schema:"public",table:"coletas"},()=>loadAdmin())
+    .on("postgres_changes",{event:"*",schema:"public",table:"turnos"},()=>loadAdmin())
+    .subscribe(st=>{
+      const el=$("admLive"); if(!el) return;
+      el.className = st==="SUBSCRIBED" ? "live" : "live off";
+      el.lastChild.textContent = st==="SUBSCRIBED" ? "AO VIVO" : "SEM SINAL";
+    });
+}
+
+function statsOf(rows){
+  const c=rows.filter(r=>r.status==="coletado").length;
+  const i=rows.filter(r=>r.status==="impedimento").length;
+  const ts=rows.map(r=>new Date(r.marcado_em)).sort((a,b)=>a-b);
+  let ph=null;
+  if(ts.length>=2){ const h=(ts[ts.length-1]-ts[0])/3600000; if(h>=0.08) ph=c/h; }
+  return {c,i,ph,ini:ts[0],fim:ts[ts.length-1]};
+}
+
+function renderAdmin(){
+  const v=$("admView");
+  if(admView==="consolidado") return renderConsolidado(v);
+  if(admView==="coleta")      return renderColeta(v);
+  if(admView==="auditores")   return renderAuditores(v);
+  if(admView==="evidencias")  return renderEvidencias(v);
+}
+
+function renderConsolidado(v){
+  const rows=admData.coletas;
+  const c=rows.filter(r=>r.status==="coletado").length;
+  const i=rows.filter(r=>r.status==="impedimento").length;
+  const ativos=new Set(rows.map(r=>r.auditor_id)).size;
+  const rotas=[...new Set(rows.map(r=>r.rota))];
+  const totalRotas=rotas.reduce((a,r)=>a+routeTotal(r),0);
+  const cob = totalRotas ? Math.round((c+i)/totalRotas*100) : 0;
+  v.innerHTML=`
+    <div class="akpis">
+      <div class="akpi c"><b>${c}</b><small>Coletadas</small></div>
+      <div class="akpi i"><b>${i}</b><small>Impedimentos</small></div>
+      <div class="akpi g"><b>${cob}%</b><small>Cobertura</small></div>
+      <div class="akpi"><b>${admData.turnos.length}/${ativos||0}</b><small>Turnos finalizados</small></div>
+    </div>`;
+  const sec=document.createElement("div");
+  sec.innerHTML=`<div class="section-tt">Turnos do dia</div>`;
+  v.appendChild(sec);
+  const card=document.createElement("div"); card.className="acard";
+  if(!admData.equipe.length){ card.innerHTML=`<div class="empty">Sem equipe cadastrada.</div>`; }
+  else admData.equipe.forEach(u=>{
+    const meus=rows.filter(r=>r.auditor_id===u.id);
+    const t=admData.turnos.find(x=>x.auditor_id===u.id);
+    const s=statsOf(meus);
+    const row=document.createElement("div"); row.className="lrow";
+    row.innerHTML=`<span class="ln">${u.nome}</span>
+      <span class="lw">${meus.length?`${s.c}✓ ${s.i}!`:"—"}</span>
+      <span class="fin ${t?"":"no"}">${t?"Finalizado "+hm(t.finalizado_em):"Em aberto"}</span>`;
+    card.appendChild(row);
+  });
+  v.appendChild(card);
+}
+
+function renderColeta(v){
+  v.innerHTML="";
+  const seg=document.createElement("div"); seg.className="seg";
+  ["todas","L1","L2"].forEach(r=>{ const b=document.createElement("button");
+    b.textContent=r==="todas"?"Todas":"Rota "+r; b.className=admSegRota===r?"on":"";
+    b.onclick=()=>{ admSegRota=r; renderColeta(v); }; seg.appendChild(b); });
+  v.appendChild(seg);
+  const rotas = admSegRota==="todas" ? ["L1","L2"] : [admSegRota];
+  let any=false;
+  rotas.forEach(r=>{
+    const rows=admData.coletas.filter(x=>x.rota===r);
+    if(!rows.length) return; any=true;
+    const c=rows.filter(x=>x.status==="coletado").length, i=rows.filter(x=>x.status==="impedimento").length;
+    const tot=routeTotal(r), p=tot-c-i;
+    const card=document.createElement("div"); card.className="acard";
+    card.innerHTML=`<div class="ahd"><span class="an">Rota ${r}</span>
+        <span class="ap">${c+i}/${tot}</span></div>
+      <div style="padding:0 15px 12px"><div class="bar">
+        <div class="bc" style="width:${c/tot*100}%"></div><div class="bi" style="width:${i/tot*100}%"></div></div></div>
+      <div class="mini"><div class="mc"><b>${c}</b><small>Coletadas</small></div>
+        <div class="mi"><b>${i}</b><small>Impedim.</small></div>
+        <div class="mh"><b>${p}</b><small>Pendentes</small></div></div>`;
+    rows.sort((a,b)=>new Date(b.marcado_em)-new Date(a.marcado_em)).slice(0,40).forEach(x=>{
+      const row=document.createElement("div"); row.className="lrow";
+      row.innerHTML=`<span class="ln">${x.loja}</span>
+        <span class="lw">${x.auditor_nome||""} · ${hm(x.marcado_em)}</span>
+        <span class="ls ${x.status==="coletado"?"c":"i"}">${x.status==="coletado"?"OK":"Imped."}</span>`;
+      card.appendChild(row);
+    });
+    v.appendChild(card);
+  });
+  if(!any) v.innerHTML+=`<div class="empty"><b>Nenhuma coleta neste dia</b>As marcações aparecem aqui em tempo real.</div>`;
+}
+
+function renderAuditores(v){
+  v.innerHTML="";
+  if(!admData.equipe.length){ v.innerHTML=`<div class="empty">Sem equipe cadastrada.</div>`; return; }
+  admData.equipe.forEach(u=>{
+    const meus=admData.coletas.filter(r=>r.auditor_id===u.id);
+    const s=statsOf(meus);
+    const rotas=[...new Set(meus.map(r=>r.rota))];
+    const tot=rotas.reduce((a,r)=>a+routeTotal(r),0);
+    const cob=tot?Math.round((s.c+s.i)/tot*100):0;
+    const t=admData.turnos.find(x=>x.auditor_id===u.id);
+    const card=document.createElement("div"); card.className="acard";
+    card.innerHTML=`
+      <div class="ahd"><div class="av" style="width:32px;height:32px;border-radius:9px;background:var(--g-52);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">${initials(u.nome)}</div>
+        <div style="flex:1"><div class="an">${u.nome}</div>
+          <div style="font-size:11.5px;color:var(--gray)">${u.funcao}</div></div>
+        <span class="fin ${t?"":"no"}">${t?"Finalizado":"Em aberto"}</span></div>
+      <div class="mini">
+        <div class="mc"><b>${s.c}</b><small>Coletadas</small></div>
+        <div class="mi"><b>${s.i}</b><small>Impedim.</small></div>
+        <div class="mh"><b>${s.ph?s.ph.toFixed(1):"—"}</b><small>Lojas/hora</small></div>
+      </div>
+      <div class="lrow"><span class="ln" style="font-weight:500;color:var(--gray)">Rota</span>
+        <span class="lw">${rotas.length?rotas.join(" + "):"—"}</span></div>
+      <div class="lrow"><span class="ln" style="font-weight:500;color:var(--gray)">Cobertura</span>
+        <span class="lw">${tot?cob+"%":"—"}</span></div>
+      <div class="lrow"><span class="ln" style="font-weight:500;color:var(--gray)">Janela</span>
+        <span class="lw">${s.ini?hm(s.ini)+" → "+hm(s.fim):"—"}</span></div>`;
+    v.appendChild(card);
+  });
+}
+
+function renderEvidencias(v){
+  v.innerHTML=`<div class="empty"><b>Evidências — Fase 3</b>
+    A câmera no app, as fotos etiquetadas POS/Sistema e a pasta Mês → Dia → Loja
+    entram na próxima entrega.</div>`;
 }
 
 /* ================= RENDER ================= */
@@ -665,6 +872,8 @@ function openSheet(){ buildSheet(); show("overlay"); show("sheet"); }
 function closeSheet(){ hide("overlay"); hide("sheet"); }
 function buildSheet(){
   const k=counts();
+  $("finOk").classList.toggle("show", !!state.finalizado);
+  $("finLbl").textContent = state.finalizado ? "Reenviar turno atualizado" : "Finalizar e enviar turno";
   $("kTot").textContent=k.t; $("kCol").textContent=k.c; $("kImp").textContent=k.i; $("kPen").textContent=k.p;
   const dt=new Date(sel.date+"T00:00").toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long"});
   $("sheetDs").textContent=`Rota ${sel.route} • ${current.nome} • ${dt}`;
@@ -690,6 +899,19 @@ function buildReport(){
   txt+=`\nChecklist final: ${CHECKLIST.filter((_,i)=>state.check[i]).length}/${CHECKLIST.length}`;
   return txt;
 }
+$("finBtn").onclick=async()=>{
+  const k=counts(), b=$("finBtn");
+  if(k.p>0 && !confirm(`Ainda há ${k.p} loja(s) pendente(s). Finalizar mesmo assim?`)) return;
+  b.disabled=true; $("finLbl").textContent="Enviando…";
+  const row={ auditor_id:current.id, auditor_nome:current.nome, auditor_funcao:current.funcao,
+    rota:sel.route, data:sel.date, total:k.t, coletadas:k.c, impedimentos:k.i, pendentes:k.p,
+    checklist_ok:CHECKLIST.filter((_,i)=>state.check[i]).length, checklist_total:CHECKLIST.length,
+    finalizado_em:new Date().toISOString() };
+  const {error}=await sb.from("turnos").upsert(row,{onConflict:"auditor_id,rota,data"});
+  if(error){ enqueue({t:"turno",row}); $("finLbl").textContent="Sem sinal — na fila de envio"; }
+  else { state.finalizado=true; saveLocal(); $("finOk").classList.add("show"); $("finLbl").textContent="Turno finalizado ✓"; }
+  b.disabled=false;
+};
 $("summaryBtn").onclick=openSheet;
 $("overlay").onclick=closeSheet;
 $("waBtn").onclick=()=>window.open(`https://wa.me/${COORD_WPP}?text=${encodeURIComponent(buildReport())}`,"_blank");

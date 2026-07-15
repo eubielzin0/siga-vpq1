@@ -2,9 +2,11 @@
    Estratégia: rede primeiro, cache como reserva offline.
    Assim toda atualização do app chega aos auditores sem travar em versão antiga.
    Os dados de coleta ficam no localStorage/Supabase — NUNCA neste cache. */
-const CACHE = "siga-vpq-v2";
+const CACHE = "siga-vpq-v6";
 const ASSETS = ["./","./index.html","./manifest.webmanifest",
-  "./icon-192.png","./icon-512.png","./apple-touch-icon.png","./favicon.png"];
+  "./icon-192.png","./icon-512.png","./apple-touch-icon.png","./favicon.png",
+  "./mark-mono.png","./mark-siga.png","./mark-vpq.png",
+  "./logo-viaparque.png","./logo-alqia.png"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));

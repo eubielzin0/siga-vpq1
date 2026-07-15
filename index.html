@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SIGA · VPQ — Painel de Coleta | Via Parque Shopping</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#293B2F">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SIGA · VPQ">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="icon" type="image/png" href="./favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g-dark:#293B2F; --g-mid:#3E5746; --g-52:#52765F; --g-7d:#7D9886;
+  --g-d2:#D2DED5; --g-eef:#EEF1EF; --gold:#C9A227; --gray:#7F7F7F;
+  --red:#B33A3A;
+  --bg:#F4F6F4; --card:#FFFFFF; --ink:#20281F; --line:#E1E6E1;
+  --shadow:0 1px 2px rgba(41,59,47,.06),0 4px 16px rgba(41,59,47,.06);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);
+  font-size:15px;line-height:1.4;-webkit-font-smoothing:antialiased;padding-bottom:96px}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+.wrap{max-width:640px;margin:0 auto;padding:0 14px}
+.eyebrow{font-size:12px;letter-spacing:.14em;font-weight:700;color:var(--g-7d);text-transform:uppercase}
+.gold-line{height:3px;width:52px;background:var(--gold);border-radius:2px;margin:14px 0 22px}
+
+/* ---------- BOOT ---------- */
+#boot{position:fixed;inset:0;background:var(--g-dark);z-index:60;display:flex;
+  align-items:center;justify-content:center;flex-direction:column;gap:16px}
+#boot.hide{display:none}
+.spin{width:30px;height:30px;border:3px solid rgba(255,255,255,.18);border-top-color:var(--gold);
+  border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+#boot .bt{color:var(--g-d2);font-size:13px;font-weight:600}
+
+/* ---------- DARK SCREENS ---------- */
+.screen{position:fixed;inset:0;background:var(--g-dark);z-index:50;display:none;
+  flex-direction:column;justify-content:center;padding:26px;overflow-y:auto}
+.screen.show{display:flex}
+.screen .box{max-width:420px;width:100%;margin:auto}
+.screen h1{color:#fff;font-size:30px;font-weight:800;margin:6px 0 2px;letter-spacing:-.02em}
+.screen .sub{color:var(--g-d2);font-size:15px}
+.field-label{color:var(--g-d2);font-size:12px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.08em;margin:20px 0 9px}
+.in{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.14);
+  color:#fff;border-radius:12px;padding:14px;font-size:16px;font-family:inherit}
+.in::placeholder{color:var(--g-7d)}
+.err{color:#FBD9D9;background:rgba(179,58,58,.25);border-radius:10px;padding:10px 13px;
+  font-size:13px;font-weight:600;margin-top:16px;display:none}
+.err.show{display:block}
+.pbtn{width:100%;margin-top:26px;background:var(--gold);color:#3a2f05;font-weight:800;
+  font-size:16px;border-radius:12px;padding:16px;transition:.15s;display:flex;
+  align-items:center;justify-content:center;gap:9px}
+.pbtn:active{transform:scale(.98)}
+.pbtn:disabled{opacity:.45}
+.pbtn .spin{width:16px;height:16px;border-width:2px;border-color:rgba(0,0,0,.2);border-top-color:#3a2f05;display:none}
+.pbtn.loading .spin{display:block}
+.opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.opt{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.14);color:#fff;
+  border-radius:12px;padding:16px 12px;font-size:15px;font-weight:600;text-align:center;
+  transition:.15s;display:flex;flex-direction:column;gap:2px}
+.opt:active{transform:scale(.97)}
+.opt.on{background:var(--g-52);border-color:var(--gold)}
+.opt small{font-weight:500;font-size:11.5px;color:var(--g-d2)}
+.who{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:14px}
+.who .av{width:44px;height:44px;border-radius:11px;background:var(--g-52);display:flex;
+  align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:18px;flex:0 0 auto}
+.who .nm{color:#fff;font-weight:700;font-size:16px}
+.who .rl{color:var(--gold);font-size:12.5px;font-weight:600;margin-top:1px}
+.linkbtn{background:none;color:var(--g-7d);font-size:13px;font-weight:600;margin-top:20px;
+  width:100%;padding:10px;text-decoration:underline}
+.hint{color:var(--g-7d);font-size:12px;margin-top:7px;text-align:center}
+
+/* ---------- HEADER ---------- */
+header{position:sticky;top:0;z-index:20;background:var(--g-dark);color:#fff;
+  box-shadow:0 2px 14px rgba(0,0,0,.14);display:none}
+header.show{display:block}
+.hd-top{display:flex;align-items:center;gap:12px;padding:12px 14px 10px}
+.ring{flex:0 0 auto}
+.hd-meta{flex:1;min-width:0}
+.hd-route{font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px}
+.badge{font-size:10.5px;font-weight:700;background:var(--gold);color:#3a2f05;padding:2px 7px;border-radius:20px}
+.hd-line2{font-size:12.5px;color:var(--g-d2);margin-top:2px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.dot-sep{width:3px;height:3px;border-radius:50%;background:var(--g-7d);display:inline-block}
+.hd-clock{font-variant-numeric:tabular-nums;font-weight:600;color:#fff}
+.hd-btn{flex:0 0 auto;background:rgba(255,255,255,.1);color:#fff;border-radius:9px;
+  padding:8px 10px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px}
+.hd-btn:active{background:rgba(255,255,255,.2)}
+.pulse{display:flex;align-items:center;gap:8px;padding:8px 14px 11px;font-size:12.5px;font-weight:600}
+.pulse .tl{flex:1;height:6px;background:rgba(255,255,255,.12);border-radius:4px;overflow:hidden;position:relative}
+.pulse .tl .prog{position:absolute;top:0;left:0;bottom:0;background:var(--g-7d);border-radius:4px;transition:width .5s}
+.pulse .tl .now{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--gold)}
+.chip{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+.chip.ok{background:rgba(125,152,134,.28);color:#DCEadd}
+.chip.late{background:rgba(179,58,58,.22);color:#FBD9D9}
+.chip.ahead{background:rgba(201,162,39,.22);color:#F5E4A8}
+/* sync bar */
+.sync{display:flex;align-items:center;justify-content:center;gap:7px;padding:5px 14px;
+  font-size:11.5px;font-weight:700;background:rgba(0,0,0,.18)}
+.sync .sd{width:7px;height:7px;border-radius:50%;background:var(--g-7d)}
+.sync.on .sd{background:#7FD6A0}
+.sync.off .sd{background:var(--gold)}
+.sync.on{color:#BFE6CC} .sync.off{color:#F5E4A8}
+
+/* ---------- BLOCKS / STORES ---------- */
+.blk{background:var(--card);border-radius:16px;box-shadow:var(--shadow);margin:14px 0;overflow:hidden}
+.blk-hd{display:flex;align-items:center;gap:10px;padding:13px 15px;cursor:pointer;user-select:none}
+.blk-hd .bt{flex:1;min-width:0}
+.blk-name{font-size:14.5px;font-weight:700;color:var(--g-dark)}
+.blk-win{font-size:12px;color:var(--gray);margin-top:1px}
+.blk-count{font-size:12.5px;font-weight:700;color:var(--g-52);font-variant-numeric:tabular-nums;
+  background:var(--g-eef);padding:4px 9px;border-radius:20px;white-space:nowrap}
+.blk-count.done{background:var(--g-52);color:#fff}
+.chev{color:var(--g-7d);transition:transform .2s;flex:0 0 auto}
+.blk.collapsed .chev{transform:rotate(-90deg)}
+.blk-bar{height:3px;background:var(--g-eef)}
+.blk-bar .f{height:100%;background:var(--g-52);transition:width .3s}
+.stores{max-height:3000px;transition:max-height .25s ease,opacity .2s;opacity:1;overflow:hidden}
+.blk.collapsed .stores{max-height:0;opacity:0}
+.store{display:flex;align-items:center;gap:12px;padding:12px 15px;border-top:1px solid var(--line);
+  border-left:4px solid transparent;transition:background .12s}
+.store:active{background:var(--g-eef)}
+.st-ico{flex:0 0 auto;width:26px;height:26px;border-radius:8px;border:2px solid var(--g-d2);
+  display:flex;align-items:center;justify-content:center;transition:.15s;color:#fff}
+.st-body{flex:1;min-width:0}
+.st-name{font-size:14.5px;font-weight:600}
+.st-meta{font-size:11.5px;color:var(--gray);margin-top:2px;display:none;font-variant-numeric:tabular-nums}
+.store.coletado{border-left-color:var(--g-52)}
+.store.coletado .st-ico{background:var(--g-52);border-color:var(--g-52)}
+.store.coletado .st-meta{display:block;color:var(--g-52);font-weight:600}
+.store.impedimento{border-left-color:var(--red);background:#FCF4F4}
+.store.impedimento .st-ico{background:var(--red);border-color:var(--red)}
+.store.impedimento .st-meta{display:block;color:var(--red);font-weight:600}
+.st-tag{flex:0 0 auto;font-size:10.5px;font-weight:700;text-transform:uppercase;color:var(--gray)}
+.store.coletado .st-tag{color:var(--g-52)}
+.store.impedimento .st-tag{color:var(--red)}
+.reasons{display:none;flex-wrap:wrap;gap:7px;padding:0 15px 13px 55px;background:#FCF4F4;border-left:4px solid var(--red)}
+.store.impedimento + .reasons.show{display:flex}
+.rchip{font-size:12px;font-weight:600;padding:6px 11px;border-radius:20px;border:1.5px solid var(--g-d2);
+  background:#fff;color:var(--g-mid)}
+.rchip:active{transform:scale(.95)}
+.rchip.on{background:var(--red);color:#fff;border-color:var(--red)}
+
+/* ---------- CHECKLIST ---------- */
+.section-tt{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--g-mid);margin:26px 4px 10px;display:flex;align-items:center;gap:8px}
+.section-tt::before{content:"";width:16px;height:2px;background:var(--gold);border-radius:2px}
+.check{background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.ci{display:flex;align-items:center;gap:12px;padding:14px 15px;border-top:1px solid var(--line)}
+.ci:first-child{border-top:none}
+.ci .cb{width:24px;height:24px;border-radius:7px;border:2px solid var(--g-d2);flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;color:#fff;transition:.15s}
+.ci.on .cb{background:var(--g-52);border-color:var(--g-52)}
+.ci span{font-size:14.5px;font-weight:500}
+.ci.on span{color:var(--g-52)}
+
+/* ---------- BOTTOM ---------- */
+.bottom{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.94);
+  backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:11px 14px 15px;display:none}
+.bottom.show{display:block}
+.bottom .row{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.bstats{flex:1;display:flex;gap:16px}
+.bstat{display:flex;flex-direction:column;line-height:1.1}
+.bstat b{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
+.bstat small{font-size:10.5px;color:var(--gray);font-weight:600;text-transform:uppercase}
+.bstat.c b{color:var(--g-52)} .bstat.i b{color:var(--red)} .bstat.p b{color:var(--gray)}
+.summary-btn{background:var(--g-dark);color:#fff;font-weight:700;font-size:14px;border-radius:12px;
+  padding:13px 18px;display:flex;align-items:center;gap:7px}
+.summary-btn:active{transform:scale(.97)}
+
+/* ---------- SHEET ---------- */
+.overlay{position:fixed;inset:0;background:rgba(20,28,22,.5);z-index:40;opacity:0;pointer-events:none;transition:.2s}
+.overlay.show{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;background:var(--bg);border-radius:22px 22px 0 0;
+  transform:translateY(100%);transition:transform .28s cubic-bezier(.3,.8,.3,1);max-height:88vh;overflow-y:auto}
+.sheet.show{transform:translateY(0)}
+.sheet .grab{width:38px;height:4px;background:var(--g-d2);border-radius:3px;margin:10px auto 4px}
+.sheet-in{max-width:640px;margin:0 auto;padding:6px 18px 30px}
+.sheet h2{font-size:20px;font-weight:800;color:var(--g-dark);margin:8px 0 2px}
+.sheet .ds{font-size:13px;color:var(--gray);margin-bottom:18px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:18px}
+.kpi{background:#fff;border-radius:13px;padding:13px 8px;text-align:center;box-shadow:var(--shadow)}
+.kpi b{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;display:block}
+.kpi small{font-size:10.5px;color:var(--gray);font-weight:600}
+.kpi.tot b{color:var(--g-dark)} .kpi.c b{color:var(--g-52)} .kpi.i b{color:var(--red)} .kpi.p b{color:var(--gray)}
+.imp-list{background:#fff;border-radius:14px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:18px}
+.imp-row{display:flex;align-items:center;gap:10px;padding:12px 14px;border-top:1px solid var(--line);font-size:13.5px}
+.imp-row:first-child{border-top:none}
+.imp-row .rn{flex:1;font-weight:600}
+.imp-row .rr{font-size:12px;color:var(--red);font-weight:600;background:#FCECEC;padding:3px 9px;border-radius:20px}
+.imp-empty{padding:16px 14px;font-size:13.5px;color:var(--g-52);font-weight:500;text-align:center}
+.wa-btn{width:100%;background:#25D366;color:#0b3d1e;font-weight:800;font-size:15.5px;border-radius:13px;
+  padding:15px;display:flex;align-items:center;justify-content:center;gap:9px}
+.wa-btn:active{transform:scale(.98)}
+.copy-btn{width:100%;margin-top:10px;background:none;border:1.5px solid var(--line);color:var(--g-mid);
+  font-weight:700;font-size:14px;border-radius:13px;padding:13px}
+.sheet-sec{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--g-mid);margin:4px 4px 9px}
+.danger{width:100%;margin-top:12px;background:none;border:1.5px solid var(--line);color:var(--gray);
+  font-weight:600;font-size:13.5px;border-radius:12px;padding:12px}
+
+/* ---------- ADMIN ---------- */
+#admin{display:none}
+#admin.show{display:block}
+.adm-hd{background:var(--g-dark);color:#fff;padding:18px 16px 20px}
+.adm-hd .top{display:flex;align-items:center;gap:12px}
+.adm-hd .av{width:46px;height:46px;border-radius:12px;background:var(--gold);color:#3a2f05;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px;flex:0 0 auto}
+.adm-hd .nm{font-size:19px;font-weight:800}
+.adm-hd .rl{font-size:12.5px;color:var(--gold);font-weight:600;margin-top:1px}
+.note{background:#FBF4DC;border:1px solid #E8D89A;border-radius:13px;padding:13px 15px;margin:16px 0;
+  font-size:13px;color:#6b5613;line-height:1.5}
+.note b{color:#4d3f0c}
+.card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;margin:14px 0}
+.trow{display:flex;align-items:center;gap:12px;padding:14px 15px;border-top:1px solid var(--line)}
+.trow:first-child{border-top:none}
+.trow .av{width:38px;height:38px;border-radius:10px;background:var(--g-eef);color:var(--g-dark);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex:0 0 auto}
+.trow .tb{flex:1;min-width:0}
+.trow .tn{font-weight:700;font-size:14.5px}
+.trow .tr{font-size:12px;color:var(--gray);margin-top:1px}
+.trow .tu{font-size:11.5px;color:var(--g-52);font-weight:700;font-variant-numeric:tabular-nums;
+  background:var(--g-eef);padding:3px 8px;border-radius:20px;white-space:nowrap}
+.rt-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rt-btn{background:var(--g-52);color:#fff;font-weight:700;font-size:14.5px;border-radius:13px;
+  padding:15px;display:flex;flex-direction:column;gap:2px}
+.rt-btn:active{transform:scale(.97)}
+.rt-btn small{font-weight:500;font-size:11.5px;color:var(--g-d2)}
+svg{display:block}
+</style>
+</head>
+<body>
+
+<div id="boot"><div class="spin"></div><div class="bt">Carregando SIGA · VPQ…</div></div>
+
+<!-- LOGIN -->
+<div class="screen" id="login">
+  <div class="box">
+    <div class="eyebrow">Auditoria • Via Parque Shopping</div>
+    <h1>SIGA · VPQ</h1>
+    <div class="sub">Painel de Coleta — acesso da equipe</div>
+    <div class="gold-line"></div>
+    <div class="field-label">Usuário</div>
+    <input class="in" id="userIn" placeholder="seu.usuario" autocapitalize="none" autocomplete="username" spellcheck="false">
+    <div class="field-label">Senha</div>
+    <input class="in" id="passIn" type="password" inputmode="numeric" placeholder="••••••" autocomplete="current-password">
+    <div class="err" id="loginErr"></div>
+    <button class="pbtn" id="loginBtn"><span class="spin"></span><span id="loginLbl">Entrar</span></button>
+  </div>
+</div>
+
+<!-- SETUP -->
+<div class="screen" id="setup">
+  <div class="box">
+    <div class="eyebrow">Início da coleta</div>
+    <div class="who" id="whoBox" style="margin-top:12px"></div>
+    <div class="gold-line" style="margin:18px 0 4px"></div>
+    <div class="field-label">Rota</div>
+    <div class="opt-grid" id="routeGrid">
+      <button class="opt" data-route="L1"><span>Rota L1</span><small>60 lojas • 6 blocos</small></button>
+      <button class="opt" data-route="L2"><span>Rota L2</span><small>27 lojas • 3 blocos</small></button>
+    </div>
+    <div class="field-label">Data da coleta</div>
+    <input type="date" id="dateIn" class="in">
+    <button class="pbtn" id="startBtn" disabled><span class="spin"></span><span id="startLbl">Iniciar coleta</span></button>
+    <div class="hint" id="resumeHint"></div>
+    <button class="linkbtn" id="logoutSetup">Sair da conta</button>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin">
+  <div class="adm-hd">
+    <div class="top">
+      <div class="av" id="admAv">G</div>
+      <div><div class="nm" id="admNm">Gabriel</div><div class="rl" id="admRl">Coordenação (Admin)</div></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="note">
+      <b>Fase 1 concluída:</b> login real e coleta gravando na nuvem.
+      O painel ao vivo segmentado (Coleta / Auditores / Consolidado) e a aba de Evidências
+      entram nas Fases 2 e 3.
+    </div>
+    <div class="section-tt">Equipe e funções</div>
+    <div class="card" id="teamCard"></div>
+    <div class="section-tt">Abrir rota</div>
+    <div class="rt-btns">
+      <button class="rt-btn" data-route="L1"><span>Rota L1</span><small>60 lojas • 6 blocos</small></button>
+      <button class="rt-btn" data-route="L2"><span>Rota L2</span><small>27 lojas • 3 blocos</small></button>
+    </div>
+    <button class="danger" id="logoutAdm" style="margin-top:22px">Sair da conta</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="hd-top">
+    <div class="ring" id="ring"></div>
+    <div class="hd-meta">
+      <div class="hd-route" id="hdRoute"></div>
+      <div class="hd-line2" id="hdLine2"></div>
+    </div>
+    <button class="hd-btn" id="switchBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3"/></svg>
+      <span id="switchLbl">Trocar</span>
+    </button>
+  </div>
+  <div class="pulse" id="pulse"></div>
+  <div class="sync on" id="syncBar"><span class="sd"></span><span id="syncTxt">Sincronizado</span></div>
+</header>
+
+<main class="wrap" id="main" style="display:none"></main>
+
+<!-- BOTTOM -->
+<div class="bottom" id="bottom">
+  <div class="row">
+    <div class="bstats">
+      <div class="bstat c"><b id="sCol">0</b><small>Coletadas</small></div>
+      <div class="bstat i"><b id="sImp">0</b><small>Impedim.</small></div>
+      <div class="bstat p"><b id="sPen">0</b><small>Pendentes</small></div>
+    </div>
+    <button class="summary-btn" id="summaryBtn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Finalizar
+    </button>
+  </div>
+</div>
+
+<!-- SHEET -->
+<div class="overlay" id="overlay"></div>
+<div class="sheet" id="sheet">
+  <div class="grab"></div>
+  <div class="sheet-in">
+    <h2>Resumo do turno</h2>
+    <div class="ds" id="sheetDs"></div>
+    <div class="kpis">
+      <div class="kpi tot"><b id="kTot">0</b><small>Total</small></div>
+      <div class="kpi c"><b id="kCol">0</b><small>Coletadas</small></div>
+      <div class="kpi i"><b id="kImp">0</b><small>Impedim.</small></div>
+      <div class="kpi p"><b id="kPen">0</b><small>Pendentes</small></div>
+    </div>
+    <div class="sheet-sec">Impedimentos e pendências</div>
+    <div class="imp-list" id="impList"></div>
+    <button class="wa-btn" id="waBtn">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.5A10 10 0 1012 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-2.9.9.9-2.8-.2-.3A8.2 8.2 0 1112 20.2z"/></svg>
+      Enviar resumo ao coordenador
+    </button>
+    <button class="copy-btn" id="copyBtn">Copiar texto do resumo</button>
+    <button class="danger" id="resetBtn">Zerar marcações deste turno</button>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+/* ================= CONEXÃO ================= */
+const SUPABASE_URL = "https://qnvehmabyekmlseinwug.supabase.co";
+const SUPABASE_KEY = "sb_publishable_BYUmYrj1r_oJlUkC8qduJg_IE_Yba-Q";
+const EMAIL_DOMAIN  = "@sigavpq.app";
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth:{ persistSession:true, autoRefreshToken:true, storage: window.localStorage }
+});
+
+/* ================= DADOS ================= */
+const ROUTES = {
+  L1:[
+    {name:"Bloco 1 — Praça de Alimentação",win:"10h10–10h35",s:["SPOLETO","KONI STORE","PATRONI","GAME POINT","COSECHAS","OFFICE GOURMET","BATATA INGLESA","KFC","BOB'S","BURGER KING","MONTANA GRILL EXPRESS","BILLY THE GRILL","PORTO DO SABOR","SASS GRILL","TEMPUR SEALY"]},
+    {name:"Bloco 2 — Corredor Game Point",win:"10h35–11h00",s:["ROLLER PATINS","FORMATTINHO","STAR BRINK","ABRACADABRA","BABALU","FINI","HAVAIANAS","MELISSA","CELLAIRIS","BEMJÁ","MILK MOO","LUPO"]},
+    {name:"Bloco 3 — Corredor Cobasi",win:"11h00–11h25",s:["NUTTY UP","ESPAÇO RUBRO NEGRO","FÁBRICA DE BOLO VÓ ALZIRA","GIGANTE DA COLINA","WINK","KOPENHAGEN","ÓTICAS CAROL","FIRST CLASS","LIFE BY VIVARA","TUPPERWARE","COBASI"]},
+    {name:"Bloco 4 — Drogarias",win:"11h25–11h50",s:["DROGASMIL","DROGA RAIA","REI DO MATE","ORTOBOM","SUMMERVILLE","DAISO","VIVO"]},
+    {name:"Bloco 5 — Serviços",win:"11h50–12h20",s:["BAGAGGIO","ACIUM","LOTÉRICA","BORA LÊ","FEIRÃO SLEEP TIME","D UNHAS","PILOTINHOS KIDS"]},
+    {name:"Bloco 6 — Retornos",win:"12h20–13h00",s:["GOTRIX","BARDANA","BAURUCAS","DELÍCIAS PORTUGUESAS","CHAVEIRO OPEN MALL","BIO MUNDO","ABRA CASA","WASH ON"]}
+  ],
+  L2:[
+    {name:"Bloco 1 — Entrada L2",win:"",s:["OUTBACK","SLEEP TIME COLCHÕES","ARRANJOS EXPRESS","BARBEARIA DOM HELIO","MR. CAT","FELIPE NASCIMENTO","PAPEL MACHÊ","LORELAY","YUKI COZINHA JAPONESA","BRASEIRO GRILL","BEL COSMÉTICOS","BROWNIERIA L2","SOULIER","O BOTICÁRIO","ESCAPE 60"]},
+    {name:"Bloco 2 — Corredor Central",win:"",s:["BOBZOOM","LEITURA","FACE SPA","ESPAÇO LASER","QUALYPÉ","RI HAPPY BRINQUEDOS","TOY DRIVERS"]},
+    {name:"Bloco 3 — Ala Oeste",win:"",s:["FIAMMETTA","SIMMONS COLCHÕES","VOLTZ PARKOUR","ROYAL VISTOS","EURO COLCHÕES"]}
+  ]
+};
+const REASONS=["Gerente ausente","Caixa não fechado","Sistema indisponível","Loja fechada","Aguardando fechamento","Outro"];
+const CHECKLIST=["Foto realizada em todas as coletas","Comprovante impresso","Sitera atualizado","Trello atualizado","Ocorrência registrada (se houver)"];
+const COORD_WPP="5521994045531";
+
+/* ================= ESTADO ================= */
+let current=null;                       // {id,nome,funcao,papel}
+let sel={route:null,date:null};
+let state={marks:{},check:{},collapsed:{}};
+let queue=[];                           // fila offline
+const $=id=>document.getElementById(id);
+const slug=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-");
+const show=id=>$(id).classList.add("show");
+const hide=id=>$(id).classList.remove("show");
+const initials=n=>(n||"?").trim().slice(0,1).toUpperCase();
+const nowHM=()=>{const d=new Date();return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;};
+const lsKey=()=>`siga:${current?.id}:${sel.route}:${sel.date}`;
+const qKey =()=>`siga-queue:${current?.id}`;
+
+/* --- cache local (nunca perde marcação) --- */
+function saveLocal(){ try{ localStorage.setItem(lsKey(), JSON.stringify(state)); }catch(e){} }
+function loadLocal(){ try{ const v=localStorage.getItem(lsKey()); return v?JSON.parse(v):null; }catch(e){ return null; } }
+function saveQueue(){ try{ localStorage.setItem(qKey(), JSON.stringify(queue)); }catch(e){} }
+function loadQueue(){ try{ const v=localStorage.getItem(qKey()); queue=v?JSON.parse(v):[]; }catch(e){ queue=[]; } }
+
+/* ================= SYNC ================= */
+function setSync(){
+  const bar=$("syncBar"), txt=$("syncTxt");
+  if(queue.length===0){ bar.className="sync on"; txt.textContent="Sincronizado"; }
+  else { bar.className="sync off"; txt.textContent=`${queue.length} marcação(ões) aguardando envio`; }
+}
+function enqueue(op){ queue.push(op); saveQueue(); setSync(); flush(); }
+
+let flushing=false;
+async function flush(){
+  if(flushing||!queue.length||!navigator.onLine) return;
+  flushing=true;
+  while(queue.length){
+    const op=queue[0];
+    try{
+      if(op.t==="up"){
+        const {error}=await sb.from("coletas").upsert(op.row,{onConflict:"auditor_id,rota,data,loja"});
+        if(error) throw error;
+      } else {
+        const {error}=await sb.from("coletas").delete()
+          .match({auditor_id:op.k.auditor_id,rota:op.k.rota,data:op.k.data,loja:op.k.loja});
+        if(error) throw error;
+      }
+      queue.shift(); saveQueue(); setSync();
+    }catch(e){ break; }   // sem rede/erro: mantém na fila e tenta depois
+  }
+  flushing=false; setSync();
+}
+window.addEventListener("online", flush);
+setInterval(flush, 20000);
+
+/* ================= AUTH ================= */
+async function loadProfile(uid){
+  const {data}=await sb.from("profiles").select("id,nome,funcao,papel").eq("id",uid).single();
+  return data;
+}
+$("loginBtn").onclick=async()=>{
+  const b=$("loginBtn"); const raw=$("userIn").value.trim().toLowerCase();
+  const pass=$("passIn").value.trim();
+  if(!raw||!pass){ showErr("Preencha usuário e senha."); return; }
+  const email = raw.includes("@") ? raw : raw+EMAIL_DOMAIN;
+  b.classList.add("loading"); b.disabled=true; $("loginLbl").textContent="Entrando…"; hide("loginErr");
+  const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
+  b.classList.remove("loading"); b.disabled=false; $("loginLbl").textContent="Entrar";
+  if(error){ showErr("Usuário ou senha incorretos."); return; }
+  const prof=await loadProfile(data.user.id);
+  if(!prof){ showErr("Perfil não encontrado. Avise a coordenação."); await sb.auth.signOut(); return; }
+  current=prof; loadQueue(); routeUser();
+};
+function showErr(m){ const e=$("loginErr"); e.textContent=m; e.classList.add("show"); }
+$("passIn").addEventListener("keydown",e=>{ if(e.key==="Enter") $("loginBtn").click(); });
+const doLogout=async()=>{ await sb.auth.signOut(); location.reload(); };
+$("logoutSetup").onclick=doLogout;
+$("logoutAdm").onclick=doLogout;
+
+function routeUser(){
+  hide("login");
+  if(current.papel==="coordenador") openAdmin(); else openSetup();
+}
+
+/* ================= SETUP ================= */
+function openSetup(){
+  ["header","bottom","admin"].forEach(hide); $("main").style.display="none";
+  $("whoBox").innerHTML=`<div class="av">${initials(current.nome)}</div>
+    <div><div class="nm">${current.nome}</div><div class="rl">${current.funcao}</div></div>`;
+  const rg=$("routeGrid");
+  [...rg.children].forEach(b=>{ b.classList.remove("on");
+    b.onclick=()=>{ sel.route=b.dataset.route; [...rg.children].forEach(c=>c.classList.remove("on"));
+      b.classList.add("on"); refreshStart(); }; });
+  const d=$("dateIn"); if(!d.value) d.value=new Date().toISOString().slice(0,10);
+  sel.date=d.value; d.onchange=()=>{ sel.date=d.value; refreshStart(); };
+  $("startBtn").onclick=()=>start(false);
+  sel.route=null; refreshStart(); show("setup");
+}
+function refreshStart(){
+  const ok=sel.route&&sel.date; $("startBtn").disabled=!ok;
+  $("resumeHint").textContent = ok&&loadLocal() ? "Há marcações salvas para esta rota — serão retomadas." : "";
+}
+
+/* --- carrega do servidor e funde com o cache local --- */
+async function pullFromCloud(){
+  const {data,error}=await sb.from("coletas").select("loja,status,motivo,marcado_em")
+    .eq("auditor_id",current.id).eq("rota",sel.route).eq("data",sel.date);
+  if(error||!data) return null;
+  const marks={};
+  data.forEach(r=>{
+    marks[slug(r.loja)]={ st:r.status, reason:r.motivo||undefined,
+      ts:new Date(r.marcado_em).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}) };
+  });
+  return marks;
+}
+async function start(fromAdmin){
+  const b=$("startBtn"); b.classList.add("loading"); $("startLbl").textContent="Carregando…";
+  const local=loadLocal();
+  state = local || {marks:{},check:{},collapsed:{}};
+  state.marks=state.marks||{}; state.check=state.check||{}; state.collapsed=state.collapsed||{};
+  const cloud=await pullFromCloud();
+  if(cloud){ // nuvem tem prioridade; o que só existe local vira fila
+    Object.keys(state.marks).forEach(k=>{ if(!cloud[k]) cloud[k]=state.marks[k]; });
+    state.marks=cloud;
+  }
+  saveLocal();
+  b.classList.remove("loading"); $("startLbl").textContent="Iniciar coleta";
+  hide("setup"); hide("admin"); show("header"); $("main").style.display="block"; show("bottom");
+  $("switchBtn").onclick = fromAdmin
+    ? ()=>{ hide("header"); $("main").style.display="none"; hide("bottom"); openAdmin(); }
+    : ()=>{ hide("header"); $("main").style.display="none"; hide("bottom"); openSetup(); };
+  $("switchLbl").textContent = fromAdmin ? "Voltar" : "Trocar rota";
+  render(); updateHeader(); startClock(); setSync(); flush(); window.scrollTo(0,0);
+}
+
+/* ================= ADMIN ================= */
+async function openAdmin(){
+  ["header","bottom","setup"].forEach(hide); $("main").style.display="none";
+  $("admAv").textContent=initials(current.nome);
+  $("admNm").textContent=current.nome; $("admRl").textContent=current.funcao;
+  const tc=$("teamCard"); tc.innerHTML=`<div class="trow"><div class="tb"><div class="tr">Carregando equipe…</div></div></div>`;
+  const {data}=await sb.from("profiles").select("nome,funcao,papel").eq("papel","auditor").order("nome");
+  tc.innerHTML="";
+  (data||[]).forEach(u=>{
+    const row=document.createElement("div"); row.className="trow";
+    row.innerHTML=`<div class="av">${initials(u.nome)}</div>
+      <div class="tb"><div class="tn">${u.nome}</div><div class="tr">${u.funcao}</div></div>`;
+    tc.appendChild(row);
+  });
+  [...document.querySelectorAll("#admin .rt-btn")].forEach(b=>{
+    b.onclick=()=>{ sel.route=b.dataset.route; sel.date=new Date().toISOString().slice(0,10); start(true); };
+  });
+  show("admin"); window.scrollTo(0,0);
+}
+
+/* ================= RENDER ================= */
+function render(){
+  const m=$("main"); m.innerHTML="";
+  ROUTES[sel.route].forEach((blk,bi)=>{
+    const done=blk.s.filter(s=>state.marks[slug(s)]?.st==="coletado").length;
+    const total=blk.s.length, col=state.collapsed[bi];
+    const card=document.createElement("section"); card.className="blk"+(col?" collapsed":"");
+    card.innerHTML=`
+      <div class="blk-hd">
+        <div class="bt"><div class="blk-name">${blk.name}</div>
+          <div class="blk-win">${blk.win?"⏱ "+blk.win:"Janela a validar"}</div></div>
+        <div class="blk-count${done===total?" done":""}">${done}/${total}</div>
+        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="blk-bar"><div class="f" style="width:${total?done/total*100:0}%"></div></div>
+      <div class="stores"></div>`;
+    card.querySelector(".blk-hd").onclick=()=>{ state.collapsed[bi]=!col; saveLocal(); render(); };
+    const sc=card.querySelector(".stores");
+    blk.s.forEach(name=>{
+      const id=slug(name), mk=state.marks[id]||{st:"pendente"};
+      const row=document.createElement("div"); row.className="store "+mk.st;
+      const tag=mk.st==="coletado"?"Coletado":mk.st==="impedimento"?"Impedim.":"Tocar";
+      const meta=mk.ts?(mk.st==="impedimento"&&mk.reason?`${mk.reason} · ${mk.ts}`:mk.ts):"";
+      row.innerHTML=`<div class="st-ico">${iconFor(mk.st)}</div>
+        <div class="st-body"><div class="st-name">${name}</div><div class="st-meta">${meta}</div></div>
+        <div class="st-tag">${tag}</div>`;
+      row.onclick=()=>cycle(name);
+      sc.appendChild(row);
+      const rr=document.createElement("div"); rr.className="reasons"+(mk.st==="impedimento"?" show":"");
+      REASONS.forEach(rz=>{ const c=document.createElement("button");
+        c.className="rchip"+(mk.reason===rz?" on":""); c.textContent=rz;
+        c.onclick=e=>{ e.stopPropagation(); setReason(name,rz); }; rr.appendChild(c); });
+      sc.appendChild(rr);
+    });
+    m.appendChild(card);
+  });
+  const tt=document.createElement("div"); tt.className="section-tt"; tt.textContent="Checklist final de turno"; m.appendChild(tt);
+  const ck=document.createElement("div"); ck.className="check";
+  CHECKLIST.forEach((c,i)=>{ const on=state.check[i]; const row=document.createElement("div");
+    row.className="ci"+(on?" on":"");
+    row.innerHTML=`<div class="cb">${on?chk():""}</div><span>${c}</span>`;
+    row.onclick=()=>{ state.check[i]=!on; saveLocal(); render(); }; ck.appendChild(row); });
+  m.appendChild(ck); updateStats();
+}
+const chk=()=>`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><path d="M20 6L9 17l-5-5"/></svg>`;
+function iconFor(st){
+  if(st==="coletado") return chk();
+  if(st==="impedimento") return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 8v5M12 17h.01"/></svg>`;
+  return "";
+}
+
+/* --- marcar (local na hora + fila pra nuvem) --- */
+function rowFor(loja,st,motivo){
+  return { auditor_id:current.id, auditor_nome:current.nome, rota:sel.route, data:sel.date,
+           loja, status:st, motivo:motivo||null, marcado_em:new Date().toISOString() };
+}
+function cycle(loja){
+  const id=slug(loja);
+  const cur=state.marks[id]?.st||"pendente";
+  const next=cur==="pendente"?"coletado":cur==="coletado"?"impedimento":"pendente";
+  if(next==="pendente"){
+    delete state.marks[id];
+    enqueue({t:"del",k:{auditor_id:current.id,rota:sel.route,data:sel.date,loja}});
+  } else {
+    const reason = next==="impedimento" ? (state.marks[id]?.reason||"") : undefined;
+    state.marks[id]={st:next,ts:nowHM(),reason};
+    enqueue({t:"up",row:rowFor(loja,next,reason)});
+  }
+  saveLocal(); render(); updateHeader();
+}
+function setReason(loja,rz){
+  const id=slug(loja); if(!state.marks[id]) return;
+  state.marks[id].reason=rz;
+  enqueue({t:"up",row:rowFor(loja,"impedimento",rz)});
+  saveLocal(); render();
+}
+
+/* ================= STATS / HEADER ================= */
+function counts(){ let c=0,i=0,t=0;
+  ROUTES[sel.route].forEach(b=>b.s.forEach(s=>{ t++; const st=state.marks[slug(s)]?.st;
+    if(st==="coletado")c++; else if(st==="impedimento")i++; }));
+  return {c,i,t,p:t-c-i};
+}
+function updateStats(){ const k=counts(); $("sCol").textContent=k.c; $("sImp").textContent=k.i; $("sPen").textContent=k.p; }
+function updateHeader(){
+  const k=counts(); updateStats();
+  $("hdRoute").innerHTML=`Rota ${sel.route} <span class="badge">SIGA · VPQ</span>`;
+  const dt=new Date(sel.date+"T00:00").toLocaleDateString("pt-BR",{day:"2-digit",month:"short"});
+  $("hdLine2").innerHTML=`<span>${current.nome}</span><span class="dot-sep"></span><span>${dt}</span><span class="dot-sep"></span><span class="hd-clock" id="clk">${nowHM()}</span>`;
+  drawRing(k.t?(k.c+k.i)/k.t:0); drawPulse(k);
+}
+function drawRing(frac){ const r=18,c=2*Math.PI*r,off=c*(1-frac);
+  $("ring").innerHTML=`<svg width="46" height="46" viewBox="0 0 46 46">
+    <circle cx="23" cy="23" r="${r}" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="4"/>
+    <circle cx="23" cy="23" r="${r}" fill="none" stroke="#C9A227" stroke-width="4" stroke-linecap="round"
+      stroke-dasharray="${c}" stroke-dashoffset="${off}" transform="rotate(-90 23 23)" style="transition:stroke-dashoffset .5s"/>
+    <text x="23" y="27" text-anchor="middle" fill="#fff" font-size="13" font-weight="800" font-family="Inter">${Math.round(frac*100)}%</text></svg>`; }
+function parseWin(w){ const m=w.match(/(\d{1,2})h(\d{2}).(\d{1,2})h(\d{2})/); if(!m)return null;
+  return [(+m[1])*60+(+m[2]),(+m[3])*60+(+m[4])]; }
+function drawPulse(k){
+  const wins=ROUTES[sel.route].map(b=>parseWin(b.win)).filter(Boolean); const pulse=$("pulse");
+  if(!wins.length){ pulse.innerHTML=`<span class="chip ok">Janela a validar</span>
+    <div class="tl"><div class="prog" style="width:${k.t?(k.c+k.i)/k.t*100:0}%"></div></div><span>${k.c+k.i}/${k.t}</span>`; return; }
+  const st=wins[0][0], en=wins[wins.length-1][1];
+  const d=new Date(), nm=d.getHours()*60+d.getMinutes();
+  const timeFrac=Math.min(1,Math.max(0,(nm-st)/(en-st))), workFrac=k.t?(k.c+k.i)/k.t:0;
+  let chip="ok", label="No horário";
+  if(nm<st){ label="Antes do turno"; }
+  else if(nm>en&&workFrac<1){ chip="late"; label="Fora da janela"; }
+  else if(workFrac>=timeFrac+0.08){ chip="ahead"; label="Adiantado"; }
+  else if(workFrac<=timeFrac-0.08){ chip="late"; label="Atrasado"; }
+  pulse.innerHTML=`<span class="chip ${chip}">${label}</span>
+    <div class="tl"><div class="prog" style="width:${workFrac*100}%"></div><div class="now" style="left:${timeFrac*100}%"></div></div>`;
+}
+let clockT;
+function startClock(){ clearTimeout(clockT);
+  const tick=()=>{ const c=$("clk"); if(c)c.textContent=nowHM(); drawPulse(counts()); clockT=setTimeout(tick,20000); };
+  tick(); }
+
+/* ================= RESUMO ================= */
+function openSheet(){ buildSheet(); show("overlay"); show("sheet"); }
+function closeSheet(){ hide("overlay"); hide("sheet"); }
+function buildSheet(){
+  const k=counts();
+  $("kTot").textContent=k.t; $("kCol").textContent=k.c; $("kImp").textContent=k.i; $("kPen").textContent=k.p;
+  const dt=new Date(sel.date+"T00:00").toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long"});
+  $("sheetDs").textContent=`Rota ${sel.route} • ${current.nome} • ${dt}`;
+  const list=$("impList"); list.innerHTML=""; const items=[];
+  ROUTES[sel.route].forEach(b=>b.s.forEach(s=>{ const mk=state.marks[slug(s)];
+    if(mk?.st==="impedimento") items.push({n:s,r:mk.reason||"Sem motivo"});
+    else if(!mk||mk.st==="pendente") items.push({n:s,r:"Pendente"}); }));
+  if(!items.length) list.innerHTML=`<div class="imp-empty">✓ Todas as lojas coletadas.</div>`;
+  else items.forEach(it=>{ const row=document.createElement("div"); row.className="imp-row";
+    row.innerHTML=`<span class="rn">${it.n}</span><span class="rr">${it.r}</span>`; list.appendChild(row); });
+}
+function buildReport(){
+  const k=counts();
+  const dt=new Date(sel.date+"T00:00").toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"});
+  let txt=`SIGA · VPQ — COLETA · Rota ${sel.route}\n${current.nome} (${current.funcao}) • ${dt}\n`;
+  txt+=`Coletadas: ${k.c}/${k.t} · Impedimentos: ${k.i} · Pendentes: ${k.p}\n`;
+  const imp=[],pen=[];
+  ROUTES[sel.route].forEach(b=>b.s.forEach(s=>{ const mk=state.marks[slug(s)];
+    if(mk?.st==="impedimento") imp.push(`• ${s} — ${mk.reason||"sem motivo"}`);
+    else if(!mk||mk.st==="pendente") pen.push(`• ${s}`); }));
+  if(imp.length) txt+=`\nIMPEDIMENTOS:\n${imp.join("\n")}\n`;
+  if(pen.length) txt+=`\nPENDENTES:\n${pen.join("\n")}\n`;
+  txt+=`\nChecklist final: ${CHECKLIST.filter((_,i)=>state.check[i]).length}/${CHECKLIST.length}`;
+  return txt;
+}
+$("summaryBtn").onclick=openSheet;
+$("overlay").onclick=closeSheet;
+$("waBtn").onclick=()=>window.open(`https://wa.me/${COORD_WPP}?text=${encodeURIComponent(buildReport())}`,"_blank");
+$("copyBtn").onclick=async()=>{ const t=buildReport();
+  try{ await navigator.clipboard.writeText(t); }catch(e){
+    const ta=document.createElement("textarea"); ta.value=t; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); }catch(_){} document.body.removeChild(ta); }
+  const b=$("copyBtn"); b.textContent="Copiado!"; setTimeout(()=>b.textContent="Copiar texto do resumo",1600); };
+$("resetBtn").onclick=async()=>{
+  if(!confirm("Zerar todas as marcações deste turno? Isso apaga também na nuvem.")) return;
+  Object.keys(state.marks).forEach(id=>{
+    const loja=ROUTES[sel.route].flatMap(b=>b.s).find(s=>slug(s)===id);
+    if(loja) enqueue({t:"del",k:{auditor_id:current.id,rota:sel.route,data:sel.date,loja}});
+  });
+  state={marks:{},check:{},collapsed:{}}; saveLocal(); render(); updateHeader(); closeSheet();
+};
+
+/* ================= BOOT ================= */
+(async function(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(session){
+    const prof=await loadProfile(session.user.id);
+    if(prof){ current=prof; loadQueue(); $("boot").classList.add("hide"); routeUser(); return; }
+  }
+  $("boot").classList.add("hide"); show("login");
+})();
+
+if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
+</script>
+</body>
+</html>

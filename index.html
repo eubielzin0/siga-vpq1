@@ -290,6 +290,80 @@ header.show{display:block}
 .fin-ok{background:#E7F0EA;color:var(--g-52);border-radius:12px;padding:12px;text-align:center;
   font-size:13px;font-weight:700;margin-bottom:10px;display:none}
 .fin-ok.show{display:block}
+
+/* --- câmera na loja --- */
+.cam{flex:0 0 auto;width:34px;height:34px;border-radius:10px;background:var(--g-eef);
+  color:var(--g-52);display:flex;align-items:center;justify-content:center;position:relative;transition:.15s}
+.cam:active{transform:scale(.92);background:var(--g-d2)}
+.cam .cnt{position:absolute;top:-4px;right:-4px;background:var(--g-52);color:#fff;font-size:9.5px;
+  font-weight:800;min-width:15px;height:15px;border-radius:9px;display:flex;align-items:center;
+  justify-content:center;padding:0 3px}
+.cam.has{background:var(--g-52);color:#fff}
+
+/* --- escolha POS/Sistema --- */
+.pick{position:fixed;left:0;right:0;bottom:0;z-index:45;background:var(--bg);border-radius:22px 22px 0 0;
+  transform:translateY(100%);transition:transform .26s cubic-bezier(.3,.8,.3,1);padding-bottom:26px}
+.pick.show{transform:translateY(0)}
+.pick .grab{width:38px;height:4px;background:var(--g-d2);border-radius:3px;margin:10px auto 6px}
+.pick-in{max-width:640px;margin:0 auto;padding:6px 18px}
+.pick h3{font-size:17px;font-weight:800;color:var(--g-dark);margin:6px 0 2px}
+.pick .pd{font-size:13px;color:var(--gray);margin-bottom:16px}
+.pick-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.pk{background:#fff;border:2px solid var(--line);border-radius:15px;padding:20px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;transition:.15s}
+.pk:active{transform:scale(.96);border-color:var(--g-52)}
+.pk .pi{width:44px;height:44px;border-radius:12px;background:var(--g-eef);color:var(--g-52);
+  display:flex;align-items:center;justify-content:center}
+.pk b{font-size:15px;font-weight:800;color:var(--g-dark)}
+.pk small{font-size:11px;color:var(--gray);text-align:center;line-height:1.3}
+
+/* --- tela de evidências --- */
+#evid{position:fixed;inset:0;background:var(--bg);z-index:44;display:none;overflow-y:auto}
+#evid.show{display:block}
+.ev-hd{position:sticky;top:0;z-index:5;background:var(--g-dark);color:#fff;padding:13px 14px}
+.ev-top{display:flex;align-items:center;gap:11px}
+.ev-back{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.ev-back:active{background:rgba(255,255,255,.2)}
+.ev-tt{flex:1;font-size:17px;font-weight:800}
+.ev-sub{font-size:11.5px;color:var(--g-d2);margin-top:1px;font-weight:500}
+.dl{flex:0 0 auto;background:var(--gold);color:#3a2f05;font-weight:800;font-size:12px;
+  padding:8px 12px;border-radius:10px;display:flex;align-items:center;gap:6px}
+.dl:active{transform:scale(.96)}
+.dl:disabled{opacity:.5}
+.crumb{display:flex;align-items:center;gap:6px;margin-top:11px;font-size:12px;color:var(--g-d2);flex-wrap:wrap}
+.crumb button{color:var(--gold);font-weight:700;font-size:12px}
+.ev-filter{width:100%;margin-top:11px;background:rgba(255,255,255,.08);
+  border:1.5px solid rgba(255,255,255,.14);color:#fff;border-radius:11px;padding:10px 12px;
+  font-size:13.5px;font-family:inherit}
+/* nós da árvore */
+.node{background:#fff;border-radius:14px;box-shadow:var(--shadow);margin:10px 0;display:flex;
+  align-items:center;gap:12px;padding:15px;transition:.12s}
+.node:active{background:var(--g-eef)}
+.node .ni{width:38px;height:38px;border-radius:11px;background:var(--g-eef);color:var(--g-52);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.node .nb{flex:1;min-width:0}
+.node .nt{font-weight:800;font-size:15px;color:var(--g-dark);text-transform:capitalize}
+.node .ns{font-size:11.5px;color:var(--gray);margin-top:1px}
+.node .nc{font-size:11.5px;font-weight:800;color:var(--g-52);background:var(--g-eef);
+  padding:4px 9px;border-radius:20px}
+/* card estilo mensagem */
+.msg{background:#fff;border-radius:14px;box-shadow:var(--shadow);margin:10px 0;overflow:hidden}
+.msg-hd{display:flex;align-items:center;gap:10px;padding:11px 13px}
+.msg-hd .ma{width:32px;height:32px;border-radius:50%;background:var(--g-52);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:0 0 auto}
+.msg-hd .mn{flex:1;font-weight:800;font-size:13.5px;color:var(--g-dark)}
+.msg-hd .mt{font-size:11px;color:var(--gray);font-variant-numeric:tabular-nums}
+.tg{font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px;letter-spacing:.04em}
+.tg.pos{background:#E7F0EA;color:var(--g-52)} .tg.sis{background:#FBF4DC;color:#8a6d10}
+.msg img{width:100%;display:block;background:var(--g-eef);min-height:120px}
+.msg-ft{display:flex;align-items:center;gap:8px;padding:9px 13px;font-size:11.5px;color:var(--gray)}
+.msg-ft .mf{flex:1}
+.del{color:var(--red);font-weight:700;font-size:11.5px}
+.up-bar{position:fixed;left:0;right:0;bottom:0;z-index:46;background:var(--g-dark);color:#fff;
+  padding:13px 16px;font-size:13px;font-weight:700;display:none;align-items:center;gap:10px}
+.up-bar.show{display:flex}
+.up-bar .spin{width:15px;height:15px;border-width:2px}
 svg{display:block}
 </style>
 </head>
@@ -354,6 +428,48 @@ svg{display:block}
   <div class="wrap"><button class="danger" id="logoutAdm" style="margin:22px 0 30px">Sair da conta</button></div>
 </div>
 
+<!-- EVIDÊNCIAS -->
+<div id="evid">
+  <div class="ev-hd">
+    <div class="ev-top">
+      <button class="ev-back" id="evBack">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <div style="flex:1;min-width:0"><div class="ev-tt">Evidências</div>
+        <div class="ev-sub" id="evSub">Mês → Dia → Loja</div></div>
+      <button class="dl" id="evDl" style="display:none">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Baixar
+      </button>
+    </div>
+    <select class="ev-filter" id="evAud" style="display:none"></select>
+    <div class="crumb" id="evCrumb"></div>
+  </div>
+  <div class="wrap" id="evView" style="padding-bottom:40px"></div>
+</div>
+
+<!-- ESCOLHA POS / SISTEMA -->
+<div class="pick" id="pick">
+  <div class="grab"></div>
+  <div class="pick-in">
+    <h3 id="pickLoja">Loja</h3>
+    <div class="pd">Qual evidência você vai registrar?</div>
+    <div class="pick-grid">
+      <button class="pk" data-tipo="POS">
+        <div class="pi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h8M8 14h5"/></svg></div>
+        <b>POS</b><small>Cupom / fechamento impresso</small>
+      </button>
+      <button class="pk" data-tipo="Sistema">
+        <div class="pi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+        <b>Sistema</b><small>Tela do sistema da loja</small>
+      </button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="camIn" accept="image/*" capture="environment" style="display:none">
+<div class="up-bar" id="upBar"><span class="spin"></span><span id="upTxt">Enviando foto…</span></div>
+
 <!-- HEADER -->
 <header id="header">
   <div class="hd-top">
@@ -362,6 +478,9 @@ svg{display:block}
       <div class="hd-route" id="hdRoute"></div>
       <div class="hd-line2" id="hdLine2"></div>
     </div>
+    <button class="hd-btn" id="evBtn" style="padding:8px 9px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    </button>
     <button class="hd-btn" id="switchBtn">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3"/></svg>
       <span id="switchLbl">Trocar</span>
@@ -573,6 +692,7 @@ async function start(fromAdmin){
     state.marks=cloud;
   }
   saveLocal();
+  await loadEvCount();
   b.classList.remove("loading"); $("startLbl").textContent="Iniciar coleta";
   hide("setup"); hide("admin"); show("header"); $("main").style.display="block"; show("bottom");
   $("switchBtn").onclick = fromAdmin
@@ -581,6 +701,222 @@ async function start(fromAdmin){
   $("switchLbl").textContent = fromAdmin ? "Voltar" : "Trocar rota";
   render(); updateHeader(); startClock(); setSync(); flush(); window.scrollTo(0,0);
 }
+
+/* ================= EVIDÊNCIAS (Fase 3) ================= */
+const MESES=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+const BUCKET="evidencias";
+let evCount={};                 // {slug(loja): n}  fotos do dia atual
+let pickLoja=null, pickTipo=null;
+let evPath={mes:null,dia:null,loja:null}, evRows=[], evFiltro="todos", evFrom="coleta";
+
+/* --- comprime antes de subir (protege o limite de 1 GB) --- */
+async function compress(file,maxW=1280,q=0.72){
+  try{
+    const img=await createImageBitmap(file);
+    const sc=Math.min(1,maxW/Math.max(img.width,img.height));
+    const w=Math.round(img.width*sc), h=Math.round(img.height*sc);
+    const c=document.createElement("canvas"); c.width=w; c.height=h;
+    c.getContext("2d").drawImage(img,0,0,w,h);
+    const b=await new Promise(r=>c.toBlob(r,"image/jpeg",q));
+    return b||file;
+  }catch(e){ return file; }
+}
+
+/* --- contagem de fotos por loja no dia --- */
+async function loadEvCount(){
+  evCount={};
+  const {data}=await sb.from("evidencias").select("loja").eq("data",sel.date);
+  (data||[]).forEach(r=>{ const k=slug(r.loja); evCount[k]=(evCount[k]||0)+1; });
+}
+
+/* --- abrir escolha POS/Sistema --- */
+function openPick(loja){
+  pickLoja=loja; $("pickLoja").textContent=loja;
+  show("overlay"); show("pick");
+}
+function closePick(){ hide("overlay"); hide("pick"); }
+[...document.querySelectorAll("#pick .pk")].forEach(b=>{
+  b.onclick=()=>{ pickTipo=b.dataset.tipo; closePick(); $("camIn").value=""; $("camIn").click(); };
+});
+
+/* --- captura -> comprime -> sobe --- */
+$("camIn").onchange=async e=>{
+  const f=e.target.files?.[0]; if(!f||!pickLoja||!pickTipo) return;
+  if(!navigator.onLine){ alert("Sem conexão. A foto precisa de internet para subir. Tente novamente ao recuperar o sinal."); return; }
+  const bar=$("upBar"); bar.classList.add("show"); $("upTxt").textContent="Comprimindo foto…";
+  try{
+    const blob=await compress(f);
+    $("upTxt").textContent=`Enviando ${pickTipo} — ${pickLoja}…`;
+    const [y,m,d]=sel.date.split("-");
+    const hhmm=nowHM().replace(":","");
+    const rand=Math.random().toString(36).slice(2,7);
+    const path=`${y}/${m}/${d}/${slug(pickLoja)}/${pickTipo}_${slug(current.nome)}_${hhmm}_${rand}.jpg`;
+    const up=await sb.storage.from(BUCKET).upload(path,blob,{contentType:"image/jpeg",upsert:false});
+    if(up.error) throw up.error;
+    const ins=await sb.from("evidencias").insert({
+      auditor_id:current.id, auditor_nome:current.nome, rota:sel.route, data:sel.date,
+      loja:pickLoja, tipo:pickTipo, path, tamanho:blob.size });
+    if(ins.error) throw ins.error;
+    evCount[slug(pickLoja)]=(evCount[slug(pickLoja)]||0)+1;
+    $("upTxt").textContent="✓ Evidência registrada"; render();
+    setTimeout(()=>bar.classList.remove("show"),1100);
+  }catch(err){
+    $("upTxt").textContent="Falha ao enviar. Tente de novo.";
+    setTimeout(()=>bar.classList.remove("show"),2200);
+  }
+  pickLoja=null; pickTipo=null;
+};
+
+/* --- tela de evidências --- */
+async function openEvid(from){
+  evFrom=from||"coleta"; evPath={mes:null,dia:null,loja:null};
+  show("evid"); $("evView").innerHTML=`<div class="empty">Carregando evidências…</div>`;
+  const isCoord=current.papel==="coordenador";
+  const selEl=$("evAud"); selEl.style.display=isCoord?"block":"none";
+  const {data}=await sb.from("evidencias").select("*").order("criado_em",{ascending:false});
+  evRows=data||[];
+  if(isCoord){
+    const nomes=[...new Set(evRows.map(r=>r.auditor_nome))].filter(Boolean).sort();
+    selEl.innerHTML=`<option value="todos">Todos os auditores</option>`+
+      nomes.map(n=>`<option value="${n}">${n}</option>`).join("");
+    selEl.value=evFiltro; selEl.onchange=()=>{ evFiltro=selEl.value; renderEvid(); };
+  }
+  renderEvid(); window.scrollTo(0,0);
+}
+$("evBack").onclick=()=>{
+  if(evPath.loja){ evPath.loja=null; return renderEvid(); }
+  if(evPath.dia){ evPath.dia=null; return renderEvid(); }
+  if(evPath.mes){ evPath.mes=null; return renderEvid(); }
+  hide("evid"); if(evFrom==="admin"){ admView="consolidado"; openAdmin(); }
+};
+function evFiltered(){ return evFiltro==="todos"?evRows:evRows.filter(r=>r.auditor_nome===evFiltro); }
+function mesLabel(k){ const [y,m]=k.split("-"); return `${MESES[+m-1]} de ${y}`; }
+
+function renderEvid(){
+  const v=$("evView"), rows=evFiltered();
+  const cr=$("evCrumb");
+  const parts=[`<button data-l="0">Todos</button>`];
+  if(evPath.mes) parts.push(`<span>›</span><button data-l="1">${mesLabel(evPath.mes)}</button>`);
+  if(evPath.dia) parts.push(`<span>›</span><button data-l="2">dia ${evPath.dia}</button>`);
+  if(evPath.loja) parts.push(`<span>›</span><span style="color:#fff;font-weight:700">${evPath.loja}</span>`);
+  cr.innerHTML=parts.join(" ");
+  [...cr.querySelectorAll("button")].forEach(b=>b.onclick=()=>{
+    const l=+b.dataset.l;
+    if(l===0) evPath={mes:null,dia:null,loja:null};
+    if(l===1) evPath.dia=evPath.loja=null;
+    if(l===2) evPath.loja=null;
+    renderEvid();
+  });
+  const isCoord=current.papel==="coordenador";
+  $("evDl").style.display = (isCoord && evPath.mes) ? "flex" : "none";
+
+  if(!rows.length){ v.innerHTML=`<div class="empty"><b>Nenhuma evidência ainda</b>As fotos tiradas no app aparecem aqui, organizadas por mês, dia e loja.</div>`; return; }
+
+  /* nível 1 — meses */
+  if(!evPath.mes){
+    $("evSub").textContent="Selecione o mês";
+    const g={}; rows.forEach(r=>{ const k=r.data.slice(0,7); (g[k]=g[k]||[]).push(r); });
+    v.innerHTML="";
+    Object.keys(g).sort().reverse().forEach(k=>{
+      const n=document.createElement("div"); n.className="node";
+      n.innerHTML=`<div class="ni"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+        <div class="nb"><div class="nt">${mesLabel(k)}</div>
+          <div class="ns">${new Set(g[k].map(r=>r.data)).size} dia(s)</div></div>
+        <span class="nc">${g[k].length} fotos</span>`;
+      n.onclick=()=>{ evPath.mes=k; renderEvid(); }; v.appendChild(n);
+    });
+    return;
+  }
+  /* nível 2 — dias */
+  if(!evPath.dia){
+    $("evSub").textContent="Selecione o dia";
+    const g={}; rows.filter(r=>r.data.slice(0,7)===evPath.mes).forEach(r=>{
+      const k=r.data.slice(8,10); (g[k]=g[k]||[]).push(r); });
+    v.innerHTML="";
+    Object.keys(g).sort().reverse().forEach(k=>{
+      const n=document.createElement("div"); n.className="node";
+      n.innerHTML=`<div class="ni"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+        <div class="nb"><div class="nt">Dia ${k}</div>
+          <div class="ns">${new Set(g[k].map(r=>r.loja)).size} loja(s)</div></div>
+        <span class="nc">${g[k].length} fotos</span>`;
+      n.onclick=()=>{ evPath.dia=k; renderEvid(); }; v.appendChild(n);
+    });
+    return;
+  }
+  /* nível 3 — lojas */
+  if(!evPath.loja){
+    $("evSub").textContent="Selecione a loja";
+    const g={}; rows.filter(r=>r.data.slice(0,7)===evPath.mes && r.data.slice(8,10)===evPath.dia)
+      .forEach(r=>{ (g[r.loja]=g[r.loja]||[]).push(r); });
+    v.innerHTML="";
+    Object.keys(g).sort().forEach(k=>{
+      const pos=g[k].filter(r=>r.tipo==="POS").length, sis=g[k].length-pos;
+      const n=document.createElement("div"); n.className="node";
+      n.innerHTML=`<div class="ni"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l1-5h16l1 5M4 9v11h16V9M9 20v-6h6v6"/></svg></div>
+        <div class="nb"><div class="nt" style="text-transform:none">${k}</div>
+          <div class="ns">${pos} POS · ${sis} Sistema</div></div>
+        <span class="nc">${g[k].length}</span>`;
+      n.onclick=()=>{ evPath.loja=k; renderEvid(); }; v.appendChild(n);
+    });
+    return;
+  }
+  /* nível 4 — fotos (formato mensagem) */
+  $("evSub").textContent="Evidências da loja";
+  const list=rows.filter(r=>r.data.slice(0,7)===evPath.mes && r.data.slice(8,10)===evPath.dia && r.loja===evPath.loja)
+    .sort((a,b)=>new Date(a.criado_em)-new Date(b.criado_em));
+  v.innerHTML="";
+  list.forEach(r=>{
+    const c=document.createElement("div"); c.className="msg";
+    c.innerHTML=`<div class="msg-hd">
+        <div class="ma">${initials(r.auditor_nome)}</div>
+        <span class="mn">${r.auditor_nome||"—"}</span>
+        <span class="tg ${r.tipo==="POS"?"pos":"sis"}">${r.tipo}</span>
+        <span class="mt">${hm(r.criado_em)}</span>
+      </div>
+      <img loading="lazy" alt="${r.tipo} — ${r.loja}">
+      <div class="msg-ft"><span class="mf">${r.rota?"Rota "+r.rota+" · ":""}${(r.tamanho/1024|0)} KB</span></div>`;
+    if(isCoord){
+      const b=document.createElement("button"); b.className="del"; b.textContent="Excluir";
+      b.onclick=async()=>{
+        if(!confirm("Excluir esta evidência? A foto será apagada do cofre.")) return;
+        await sb.storage.from(BUCKET).remove([r.path]);
+        await sb.from("evidencias").delete().eq("id",r.id);
+        evRows=evRows.filter(x=>x.id!==r.id); renderEvid();
+      };
+      c.querySelector(".msg-ft").appendChild(b);
+    }
+    v.appendChild(c);
+    sb.storage.from(BUCKET).createSignedUrl(r.path,3600).then(({data})=>{
+      if(data?.signedUrl) c.querySelector("img").src=data.signedUrl;
+    });
+  });
+}
+
+/* --- baixar a pasta do mês (zip mês/dia/loja) --- */
+$("evDl").onclick=async()=>{
+  const b=$("evDl"); if(!evPath.mes) return;
+  const list=evFiltered().filter(r=>r.data.slice(0,7)===evPath.mes);
+  if(!list.length) return;
+  b.disabled=true;
+  try{
+    const {default:JSZip}=await import("https://esm.sh/jszip@3.10.1");
+    const zip=new JSZip();
+    for(let i=0;i<list.length;i++){
+      const r=list[i]; b.textContent=`${i+1}/${list.length}`;
+      const {data}=await sb.storage.from(BUCKET).download(r.path);
+      if(!data) continue;
+      const file=r.path.split("/").pop();
+      zip.file(`${mesLabel(evPath.mes)}/dia ${r.data.slice(8,10)}/${r.loja}/${file}`, data);
+    }
+    const out=await zip.generateAsync({type:"blob"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(out);
+    a.download=`SIGA-VPQ_evidencias_${evPath.mes}${evFiltro!=="todos"?"_"+slug(evFiltro):""}.zip`;
+    a.click(); URL.revokeObjectURL(a.href);
+  }catch(e){ alert("Não foi possível gerar o download. Tente novamente."); }
+  b.disabled=false; b.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Baixar`;
+};
+$("evBtn").onclick=()=>openEvid("coleta");
 
 /* ================= ADMIN (painel ao vivo) ================= */
 let admView="consolidado", admDate=new Date().toISOString().slice(0,10);
@@ -743,9 +1079,8 @@ function renderAuditores(v){
 }
 
 function renderEvidencias(v){
-  v.innerHTML=`<div class="empty"><b>Evidências — Fase 3</b>
-    A câmera no app, as fotos etiquetadas POS/Sistema e a pasta Mês → Dia → Loja
-    entram na próxima entrega.</div>`;
+  v.innerHTML=`<div class="empty">Abrindo evidências…</div>`;
+  hide("admin"); openEvid("admin");
 }
 
 /* ================= RENDER ================= */
@@ -771,10 +1106,15 @@ function render(){
       const row=document.createElement("div"); row.className="store "+mk.st;
       const tag=mk.st==="coletado"?"Coletado":mk.st==="impedimento"?"Impedim.":"Tocar";
       const meta=mk.ts?(mk.st==="impedimento"&&mk.reason?`${mk.reason} · ${mk.ts}`:mk.ts):"";
+      const nf=evCount[id]||0;
       row.innerHTML=`<div class="st-ico">${iconFor(mk.st)}</div>
         <div class="st-body"><div class="st-name">${name}</div><div class="st-meta">${meta}</div></div>
         <div class="st-tag">${tag}</div>`;
       row.onclick=()=>cycle(name);
+      const cam=document.createElement("button"); cam.className="cam"+(nf?" has":"");
+      cam.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>${nf?`<span class="cnt">${nf}</span>`:""}`;
+      cam.onclick=e=>{ e.stopPropagation(); openPick(name); };
+      row.appendChild(cam);
       sc.appendChild(row);
       const rr=document.createElement("div"); rr.className="reasons"+(mk.st==="impedimento"?" show":"");
       REASONS.forEach(rz=>{ const c=document.createElement("button");
@@ -913,7 +1253,7 @@ $("finBtn").onclick=async()=>{
   b.disabled=false;
 };
 $("summaryBtn").onclick=openSheet;
-$("overlay").onclick=closeSheet;
+$("overlay").onclick=()=>{ closeSheet(); closePick(); };
 $("waBtn").onclick=()=>window.open(`https://wa.me/${COORD_WPP}?text=${encodeURIComponent(buildReport())}`,"_blank");
 $("copyBtn").onclick=async()=>{ const t=buildReport();
   try{ await navigator.clipboard.writeText(t); }catch(e){

@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creative Vision — Agência Digital de Marketing, Sites e SaaS</title>
+<meta name="description" content="Creative Vision: gestão de redes sociais, criação de sites, landing pages e SaaS, comunicação e gerenciamento de contas para marcas que querem crescer de verdade.">
+<meta property="og:title" content="Creative Vision — Agência Digital">
+<meta property="og:description" content="Redes sociais, sites, landing pages, SaaS e comunicação em um só lugar.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237C5CFC'/%3E%3Cstop offset='1' stop-color='%2322D3EE'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath d='M20 40 L32 18 L44 40 Z' fill='white' opacity='0.92'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08070D; --bg-soft:#0E0C18; --card:#141220; --card-2:#181629;
+  --line:rgba(255,255,255,.09); --line-soft:rgba(255,255,255,.06);
+  --ink:#F3F1FA; --ink-dim:#B8B3CC; --ink-mute:#7B7794;
+  --violet:#7C5CFC; --violet-2:#A78BFA; --cyan:#22D3EE; --pink:#F472B6;
+  --grad: linear-gradient(120deg,var(--violet),var(--cyan));
+  --grad-soft: linear-gradient(135deg,rgba(124,92,252,.18),rgba(34,211,238,.10));
+  --shadow: 0 10px 40px rgba(0,0,0,.35);
+  --radius: 20px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;line-height:1.55;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Sora',system-ui,sans-serif;letter-spacing:-.02em;margin:0}
+p{margin:0}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+section{position:relative}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);
+  background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.25);
+  padding:6px 14px;border-radius:100px}
+.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:700;
+  font-size:15px;padding:15px 26px;border-radius:14px;cursor:pointer;border:1px solid transparent;
+  transition:transform .18s ease, box-shadow .18s ease, opacity .18s ease; white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--grad);color:#0A0812;box-shadow:0 8px 30px rgba(124,92,252,.35)}
+.btn-primary:hover{box-shadow:0 10px 40px rgba(124,92,252,.5)}
+.btn-ghost{background:rgba(255,255,255,.04);color:var(--ink);border-color:var(--line)}
+.btn-ghost:hover{background:rgba(255,255,255,.08)}
+.btn-block{width:100%}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+.bg-noise::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.4;
+  background-image:radial-gradient(circle at 20% 20%, rgba(124,92,252,.14), transparent 45%),
+    radial-gradient(circle at 85% 10%, rgba(34,211,238,.10), transparent 40%);}
+
+/* ---------- HEADER ---------- */
+header{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;
+  transition:background .25s ease, border-color .25s ease, padding .25s ease}
+header.scrolled{background:rgba(8,7,13,.78);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line-soft);padding:11px 0}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Sora',sans-serif;font-weight:800;
+  font-size:19px;letter-spacing:-.01em}
+.brand .mark{width:34px;height:34px;border-radius:10px;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;font-size:16px;color:#0A0812;font-weight:800;
+  box-shadow:0 4px 18px rgba(124,92,252,.4)}
+.nav-links{display:flex;align-items:center;gap:30px}
+.nav-links a{font-size:14.5px;font-weight:600;color:var(--ink-dim);transition:color .15s}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{display:flex;align-items:center;gap:12px}
+.burger{display:none;width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,.06);
+  border:1px solid var(--line);align-items:center;justify-content:center;flex-direction:column;gap:5px;cursor:pointer}
+.burger span{width:18px;height:2px;background:var(--ink);border-radius:2px;transition:.25s}
+.burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mobile-menu{display:none;position:fixed;inset:64px 14px auto 14px;background:var(--card);
+  border:1px solid var(--line);border-radius:18px;padding:18px;flex-direction:column;gap:4px;
+  box-shadow:var(--shadow);z-index:99}
+.mobile-menu.open{display:flex}
+.mobile-menu a{padding:13px 10px;font-weight:600;border-radius:10px;color:var(--ink-dim)}
+.mobile-menu a:hover{background:rgba(255,255,255,.05);color:var(--ink)}
+.mobile-menu .btn{margin-top:8px}
+
+/* ---------- HERO ---------- */
+.hero{padding:168px 0 100px;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+.hero h1{font-size:clamp(34px,5vw,58px);line-height:1.06;margin:20px 0 22px}
+.hero .lead{font-size:18px;color:var(--ink-dim);max-width:520px;margin-bottom:34px}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:42px}
+.hero-stats{display:flex;gap:34px;flex-wrap:wrap}
+.hero-stats .stat b{display:block;font-family:'Sora',sans-serif;font-size:26px;font-weight:800}
+.hero-stats .stat span{font-size:13px;color:var(--ink-mute)}
+.hero-visual{position:relative;height:460px}
+.orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55}
+.orb1{width:280px;height:280px;background:var(--violet);top:-20px;right:40px}
+.orb2{width:220px;height:220px;background:var(--cyan);bottom:0;left:10px;opacity:.35}
+.float-card{position:absolute;background:var(--card);border:1px solid var(--line);
+  border-radius:18px;padding:18px;box-shadow:var(--shadow);width:230px;animation:float 6s ease-in-out infinite}
+.fc1{top:10px;left:20px;animation-delay:0s}
+.fc2{bottom:40px;right:0;animation-delay:1.2s;width:200px}
+.fc3{top:190px;left:120px;animation-delay:2.4s;width:190px}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.fc-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.fc-ico{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.fc-title{font-weight:700;font-size:13.5px}
+.fc-sub{font-size:11.5px;color:var(--ink-mute)}
+.fc-bar{height:6px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:8px}
+.fc-bar i{display:block;height:100%;background:var(--grad);border-radius:4px}
+.logos-row{margin-top:70px;padding-top:38px;border-top:1px solid var(--line-soft)}
+.logos-row p{text-align:center;font-size:12.5px;color:var(--ink-mute);text-transform:uppercase;
+  letter-spacing:.14em;font-weight:700;margin-bottom:26px}
+.logos-strip{display:flex;justify-content:center;gap:46px;flex-wrap:wrap;opacity:.6}
+.logos-strip span{font-family:'Sora',sans-serif;font-weight:800;font-size:18px;color:var(--ink-mute)}
+
+/* ---------- SECTION HEAD ---------- */
+.sec-head{text-align:center;max-width:640px;margin:0 auto 56px}
+.sec-head .eyebrow{margin-bottom:18px}
+.sec-head h2{font-size:clamp(28px,3.6vw,40px);margin-bottom:16px}
+.sec-head p{color:var(--ink-dim);font-size:16.5px}
+.section-pad{padding:100px 0}
+
+/* ---------- SERVICES ---------- */
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.s-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:30px 26px;transition:transform .25s ease, border-color .25s ease, background .25s ease}
+.s-card:hover{transform:translateY(-6px);border-color:rgba(124,92,252,.4);background:var(--card-2)}
+.s-ico{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  font-size:24px;margin-bottom:20px}
+.s-card h3{font-size:19px;margin-bottom:10px}
+.s-card p{color:var(--ink-dim);font-size:14.5px}
+.s-card .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px}
+.s-card .tags span{font-size:11.5px;font-weight:600;color:var(--ink-mute);background:rgba(255,255,255,.05);
+  border:1px solid var(--line-soft);padding:4px 10px;border-radius:100px}
+
+/* ---------- WHY / DIFERENCIAIS ---------- */
+.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.why-card{padding:26px 22px;border-radius:18px;background:var(--grad-soft);border:1px solid var(--line-soft)}
+.why-card .num{font-family:'Sora',sans-serif;font-weight:800;font-size:14px;color:var(--cyan);margin-bottom:14px}
+.why-card h4{font-size:16px;margin-bottom:8px}
+.why-card p{font-size:13.8px;color:var(--ink-dim)}
+
+/* ---------- PROCESS ---------- */
+.process{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative}
+.process::before{content:"";position:absolute;top:26px;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--line),var(--line),transparent);z-index:0}
+.p-step{position:relative;padding:0 18px;text-align:left;z-index:1}
+.p-step .idx{width:52px;height:52px;border-radius:16px;background:var(--bg);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:800;
+  font-size:18px;margin-bottom:22px;background-image:var(--grad-soft)}
+.p-step h4{font-size:17px;margin-bottom:8px}
+.p-step p{font-size:14px;color:var(--ink-dim)}
+
+/* ---------- CASES ---------- */
+.cases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.case-card{border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);background:var(--card)}
+.case-thumb{height:170px;display:flex;align-items:center;justify-content:center;position:relative}
+.case-thumb span{font-family:'Sora',sans-serif;font-weight:800;font-size:22px;color:rgba(255,255,255,.9)}
+.case-body{padding:22px}
+.case-tag{font-size:11.5px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:.08em}
+.case-body h3{font-size:18px;margin:10px 0 8px}
+.case-body p{font-size:14px;color:var(--ink-dim)}
+.case-metrics{display:flex;gap:18px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line-soft)}
+.case-metrics div b{display:block;font-family:'Sora',sans-serif;font-size:18px}
+.case-metrics div span{font-size:11.5px;color:var(--ink-mute)}
+
+/* ---------- PLANS ---------- */
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:stretch}
+.plan{border-radius:var(--radius);border:1px solid var(--line);background:var(--card);padding:34px 28px;
+  display:flex;flex-direction:column}
+.plan.featured{border-color:transparent;background:linear-gradient(var(--card),var(--card)) padding-box,
+  var(--grad) border-box;border-width:2px;position:relative;transform:scale(1.03)}
+.plan.featured::before{content:"Mais popular";position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+  background:var(--grad);color:#0A0812;font-size:11.5px;font-weight:800;padding:5px 16px;border-radius:100px}
+.plan .p-name{font-size:14px;font-weight:700;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.08em}
+.plan .p-price{font-family:'Sora',sans-serif;font-size:38px;font-weight:800;margin:14px 0 4px}
+.plan .p-price span{font-size:14px;color:var(--ink-mute);font-weight:500;font-family:'Inter',sans-serif}
+.plan .p-desc{color:var(--ink-dim);font-size:13.8px;margin-bottom:22px}
+.plan ul{list-style:none;margin:0 0 26px;padding:0;display:flex;flex-direction:column;gap:12px;flex:1}
+.plan li{display:flex;gap:10px;font-size:14px;color:var(--ink-dim)}
+.plan li b{color:var(--ink);font-weight:500}
+.check{flex:0 0 auto;width:18px;height:18px;border-radius:50%;background:rgba(34,211,238,.15);
+  color:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:11px;margin-top:2px}
+
+/* ---------- TESTIMONIALS ---------- */
+.t-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.t-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px}
+.t-stars{color:#F5B94F;font-size:14px;margin-bottom:16px;letter-spacing:2px}
+.t-card p.quote{font-size:15px;color:var(--ink-dim);margin-bottom:22px}
+.t-person{display:flex;align-items:center;gap:12px}
+.t-avatar{width:42px;height:42px;border-radius:50%;background:var(--grad);display:flex;align-items:center;
+  justify-content:center;font-weight:800;color:#0A0812;font-size:15px}
+.t-name{font-weight:700;font-size:14px}
+.t-role{font-size:12.5px;color:var(--ink-mute)}
+
+/* ---------- FAQ ---------- */
+.faq{max-width:800px;margin:0 auto}
+.faq-item{border-bottom:1px solid var(--line-soft)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 4px;
+  cursor:pointer;font-weight:700;font-size:16px}
+.faq-q .plus{flex:0 0 auto;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.06);
+  display:flex;align-items:center;justify-content:center;font-size:16px;transition:transform .25s ease}
+.faq-item.open .plus{transform:rotate(45deg);background:var(--grad);color:#0A0812}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.faq-a p{padding:0 4px 22px;color:var(--ink-dim);font-size:14.5px;max-width:680px}
+
+/* ---------- CONTACT ---------- */
+.contact-wrap{display:grid;grid-template-columns:.95fr 1.05fr;gap:40px;background:var(--card);
+  border:1px solid var(--line);border-radius:28px;padding:48px;overflow:hidden;position:relative}
+.contact-info h2{font-size:30px;margin-bottom:14px}
+.contact-info p{color:var(--ink-dim);font-size:15px;margin-bottom:30px}
+.contact-channels{display:flex;flex-direction:column;gap:14px}
+.channel{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;
+  background:rgba(255,255,255,.03);border:1px solid var(--line-soft);transition:.2s}
+.channel:hover{background:rgba(255,255,255,.06)}
+.channel .c-ico{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.channel b{display:block;font-size:14px}
+.channel span{font-size:12.5px;color:var(--ink-mute)}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-mute);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group input, .form-group select, .form-group textarea{width:100%;background:rgba(255,255,255,.04);
+  border:1.5px solid var(--line);color:var(--ink);border-radius:12px;padding:13px 14px;font-size:14.5px;
+  font-family:inherit;transition:border-color .15s}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus{outline:none;border-color:var(--violet)}
+.form-group textarea{resize:vertical;min-height:100px}
+.form-note{font-size:12px;color:var(--ink-mute);margin-top:14px;text-align:center}
+.form-success{display:none;text-align:center;padding:40px 10px}
+.form-success .ok-ico{width:60px;height:60px;border-radius:50%;background:var(--grad);margin:0 auto 18px;
+  display:flex;align-items:center;justify-content:center;font-size:26px;color:#0A0812}
+.form-success h3{margin-bottom:8px}
+.form-success p{color:var(--ink-dim);font-size:14px}
+
+/* ---------- CTA BANNER ---------- */
+.cta-banner{border-radius:28px;background:var(--grad);padding:60px;display:flex;align-items:center;
+  justify-content:space-between;gap:30px;flex-wrap:wrap;color:#0A0812}
+.cta-banner h2{font-size:clamp(24px,3vw,32px);max-width:520px;color:#0A0812}
+.cta-banner p{color:rgba(10,8,18,.72);margin-top:10px;font-size:15px}
+.cta-banner .btn-ghost{background:rgba(10,8,18,.1);border-color:rgba(10,8,18,.25);color:#0A0812}
+.cta-banner .btn-ghost:hover{background:rgba(10,8,18,.18)}
+
+/* ---------- FOOTER ---------- */
+footer{padding:70px 0 30px;border-top:1px solid var(--line-soft);margin-top:40px}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;margin-bottom:50px}
+.foot-brand p{color:var(--ink-dim);font-size:14px;margin-top:14px;max-width:280px}
+.foot-social{display:flex;gap:10px;margin-top:20px}
+.foot-social a{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.05);
+  border:1px solid var(--line-soft);display:flex;align-items:center;justify-content:center;font-size:15px}
+.foot-social a:hover{background:rgba(255,255,255,.1)}
+.foot-col h4{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-mute);margin-bottom:18px}
+.foot-col a{display:block;font-size:14px;color:var(--ink-dim);margin-bottom:12px}
+.foot-col a:hover{color:var(--ink)}
+.foot-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;
+  padding-top:26px;border-top:1px solid var(--line-soft);font-size:13px;color:var(--ink-mute)}
+
+/* ---------- WHATSAPP FLOAT ---------- */
+.wa-float{position:fixed;bottom:26px;right:26px;width:60px;height:60px;border-radius:50%;
+  background:#25D366;display:flex;align-items:center;justify-content:center;font-size:28px;
+  box-shadow:0 10px 30px rgba(37,211,102,.5);z-index:90;animation:pulseWa 2.4s ease-in-out infinite}
+@keyframes pulseWa{0%,100%{box-shadow:0 10px 30px rgba(37,211,102,.5)}50%{box-shadow:0 10px 30px rgba(37,211,102,.8),0 0 0 8px rgba(37,211,102,.12)}}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:980px){
+  .nav-links{display:none}
+  .nav-cta .btn-ghost{display:none}
+  .burger{display:flex}
+  .hero-grid{grid-template-columns:1fr}
+  .hero-visual{height:340px;order:-1}
+  .services-grid{grid-template-columns:repeat(2,1fr)}
+  .why-grid{grid-template-columns:repeat(2,1fr)}
+  .process{grid-template-columns:repeat(2,1fr);row-gap:36px}
+  .process::before{display:none}
+  .cases-grid{grid-template-columns:1fr}
+  .plans-grid{grid-template-columns:1fr}
+  .plan.featured{transform:none}
+  .t-grid{grid-template-columns:1fr}
+  .contact-wrap{grid-template-columns:1fr;padding:30px}
+  .form-row{grid-template-columns:1fr}
+  .foot-grid{grid-template-columns:1fr 1fr}
+  .cta-banner{padding:40px}
+}
+@media (max-width:560px){
+  .wrap{padding:0 18px}
+  .hero{padding:140px 0 70px}
+  .hero-stats{gap:24px}
+  .section-pad{padding:70px 0}
+  .foot-grid{grid-template-columns:1fr}
+  .cta-banner{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header id="siteHeader">
+  <div class="wrap nav">
+    <a href="#top" class="brand">
+      <span class="mark">CV</span>
+      Creative Vision
+    </a>
+    <nav class="nav-links">
+      <a href="#servicos">Serviços</a>
+      <a href="#cases">Cases</a>
+      <a href="#processo">Processo</a>
+      <a href="#planos">Planos</a>
+      <a href="#depoimentos">Depoimentos</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#contato" class="btn btn-ghost">Fale conosco</a>
+      <!-- troque pelo número real da agência -->
+      <a href="https://wa.me/5511999999999?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20a%20Creative%20Vision" target="_blank" rel="noopener" class="btn btn-primary">WhatsApp</a>
+      <button class="burger" id="burger" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#servicos">Serviços</a>
+  <a href="#cases">Cases</a>
+  <a href="#processo">Processo</a>
+  <a href="#planos">Planos</a>
+  <a href="#depoimentos">Depoimentos</a>
+  <a href="#faq">FAQ</a>
+  <a href="https://wa.me/5511999999999" target="_blank" rel="noopener" class="btn btn-primary btn-block">Falar no WhatsApp</a>
+</div>
+
+<div id="top"></div>
+
+<!-- ================= HERO ================= -->
+<section class="hero bg-noise">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow"><span class="dot"></span> Agência digital full service</span>
+        <h1>Sua marca não deveria parecer <span class="grad-text">AMADORA</span> na internet.</h1>
+        <p class="lead">Traduzimos o valor real do seu negócio em presença digital: redes sociais, sites, landing pages e SaaS que transformam visitantes curiosos em clientes decididos.</p>
+        <div class="hero-cta">
+          <a href="https://wa.me/5511999999999?text=Ol%C3%A1!%20Quero%20uma%20proposta%20da%20Creative%20Vision" target="_blank" rel="noopener" class="btn btn-primary">
+            QUERO MINHA PROPOSTA
+          </a>
+          <a href="#servicos" class="btn btn-ghost">Ver serviços ↓</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><b class="counter" data-target="120" data-suffix="+">0</b><span>projetos entregues</span></div>
+          <div class="stat"><b class="counter" data-target="98" data-suffix="%">0</b><span>clientes satisfeitos</span></div>
+          <div class="stat"><b class="counter" data-target="24" data-suffix="/7">0</b><span>suporte às contas</span></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="orb orb1"></div>
+        <div class="orb orb2"></div>
+        <div class="float-card fc1 reveal in">
+          <div class="fc-head">
+            <div class="fc-ico" style="background:rgba(124,92,252,.18)">📈</div>
+            <div><div class="fc-title">Engajamento</div><div class="fc-sub">Instagram · últimos 30 dias</div></div>
+          </div>
+          <div class="fc-bar"><i style="width:82%"></i></div>
+        </div>
+        <div class="float-card fc2 reveal in">
+          <div class="fc-head">
+            <div class="fc-ico" style="background:rgba(34,211,238,.18)">🌐</div>
+            <div><div class="fc-title">Novo site no ar</div><div class="fc-sub">Deploy concluído</div></div>
+          </div>
+          <div class="fc-bar"><i style="width:100%"></i></div>
+        </div>
+        <div class="float-card fc3 reveal in">
+          <div class="fc-head">
+            <div class="fc-ico" style="background:rgba(244,114,182,.18)">💬</div>
+            <div><div class="fc-title">Gestão de contas</div><div class="fc-sub">3 respostas pendentes</div></div>
+          </div>
+          <div class="fc-bar"><i style="width:45%"></i></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="logos-row">
+      <p>Empresas que já confiaram no nosso trabalho</p>
+      <div class="logos-strip">
+        <span>NOVA&nbsp;CO</span><span>URBANA</span><span>PRISMA</span><span>ORBIT</span><span>VELLO</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SERVIÇOS ================= -->
+<section id="servicos" class="section-pad">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="dot"></span> O que fazemos</span>
+      <h2>Tudo o que sua marca precisa para existir online</h2>
+      <p>Da estratégia de conteúdo ao código do seu produto — um time só, um contrato só, sem dor de cabeça.</p>
+    </div>
+    <div class="services-grid">
+      <div class="s-card reveal">
+        <div class="s-ico" style="background:rgba(124,92,252,.15)">📱</div>
+        <h3>Gestão de Redes Sociais</h3>
+        <p>Planejamento de conteúdo, design de posts, calendário editorial e gestão de comunidade em Instagram, TikTok, LinkedIn e mais.</p>
+        <div class="tags"><span>Conteúdo</span><span>Design</span><span>Comunidade</span></div>
+      </div>
+      <div class="s-card reveal">
+        <div class="s-ico" style="background:rgba(34,211,238,.15)">🌐</div>
+        <h3>Sites & Landing Pages</h3>
+        <p>Sites institucionais, e-commerces e landing pages de alta conversão, rápidas, responsivas e otimizadas para SEO.</p>
+        <div class="tags"><span>UI/UX</span><span>SEO</span><span>Performance</span></div>
+      </div>
+      <div class="s-card reveal">
+        <div class="s-ico" style="background:rgba(244,114,182,.15)">⚙️</div>
+        <h3>Desenvolvimento de SaaS</h3>
+        <p>Do MVP ao produto escalável: plataformas, painéis e sistemas sob medida com foco em experiência e crescimento.</p>
+        <div class="tags"><span>Produto</span><span>MVP</span><span>Escala</span></div>
+      </div>
+      <div class="s-card reveal">
+        <div class="s-ico" style="background:rgba(245,185,79,.15)">💬</div>
+        <h3>Comunicação & Branding</h3>
+        <p>Identidade visual, tom de voz, copywriting e estratégia de comunicação alinhados aos objetivos do seu negócio.</p>
+        <div class="tags"><span>Identidade</span><span>Copy</span><span>Estratégia</span></div>
+      </div>
+      <div class="s-card reveal">
+        <div class="s-ico" style="background:rgba(124,92,252,.15)">🗂️</div>
+        <h3>Gerenciamento de Contas</h3>
+        <p>Atendimento, moderação, resposta a mensagens e comentários, relatórios periódicos e otimização contínua.</p>
+        <div class="tags"><span>Atendimento</span><span>Relatórios</span><span>Otimização</span></div>
+      </div>
+      <div class="s-card reveal">
+        <div class="s-ico" style="background:rgba(34,211,238,.15)">🎯</div>
+        <h3>Tráfego Pago & Growth</h3>
+        <p>Campanhas em Meta Ads e Google Ads com foco em ROI, testes A/B e análise de dados para escalar resultados.</p>
+        <div class="tags"><span>Ads</span><span>Analytics</span><span>ROI</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PILARES ================= -->
+<section class="section-pad" style="background:var(--bg-soft)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="dot"></span> Nossa metodologia</span>
+      <h2>Os pilares da conversão absoluta</h2>
+      <p>O verdadeiro luxo não é apenas visual. É a engenharia invisível por trás de cada resultado.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <div class="num">01</div>
+        <h4>Design que retém</h4>
+        <p>Interfaces limpas, com hierarquia visual pensada para guiar o olhar até a conversão.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="num">02</div>
+        <h4>Tecnologia que performa</h4>
+        <p>Código rápido, responsivo e estável — sem gambiarra, sem lentidão, sem dor de cabeça.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="num">03</div>
+        <h4>Copy que vende</h4>
+        <p>Textos e narrativas persuasivas, construídos em cima de funis reais de conversão.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="num">04</div>
+        <h4>Dados que comprovam</h4>
+        <p>Métricas, relatórios e otimização contínua — zero achismo, só resultado mensurável.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROCESSO ================= -->
+<section id="processo" class="section-pad">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="dot"></span> Como trabalhamos</span>
+      <h2>Um processo simples, do briefing ao resultado</h2>
+    </div>
+    <div class="process">
+      <div class="p-step reveal">
+        <div class="idx">01</div>
+        <h4>Diagnóstico</h4>
+        <p>Entendemos seu negócio, público e objetivos em uma imersão inicial.</p>
+      </div>
+      <div class="p-step reveal">
+        <div class="idx">02</div>
+        <h4>Estratégia</h4>
+        <p>Montamos o plano de ação: conteúdo, design, tecnologia e mídia.</p>
+      </div>
+      <div class="p-step reveal">
+        <div class="idx">03</div>
+        <h4>Execução</h4>
+        <p>Produção e desenvolvimento com checkpoints e aprovações claras.</p>
+      </div>
+      <div class="p-step reveal">
+        <div class="idx">04</div>
+        <h4>Otimização</h4>
+        <p>Acompanhamento contínuo de métricas e ajustes para maximizar resultado.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CASES ================= -->
+<section id="cases" class="section-pad" style="background:var(--bg-soft)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="dot"></span> Resultados</span>
+      <h2>Alguns projetos recentes</h2>
+      <p>Substitua pelos seus cases reais assim que tiver os dados e imagens.</p>
+    </div>
+    <div class="cases-grid">
+      <div class="case-card reveal">
+        <div class="case-thumb" style="background:linear-gradient(135deg,#7C5CFC,#22D3EE)"><span>NOVA CO</span></div>
+        <div class="case-body">
+          <div class="case-tag">Redes Sociais</div>
+          <h3>Reposicionamento de marca</h3>
+          <p>Nova identidade visual e calendário de conteúdo para redes sociais.</p>
+          <div class="case-metrics">
+            <div><b>+180%</b><span>engajamento</span></div>
+            <div><b>+64%</b><span>seguidores</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="case-card reveal">
+        <div class="case-thumb" style="background:linear-gradient(135deg,#22D3EE,#F472B6)"><span>URBANA</span></div>
+        <div class="case-body">
+          <div class="case-tag">Landing Page</div>
+          <h3>Página de lançamento</h3>
+          <p>Landing page de alta conversão para lançamento de produto imobiliário.</p>
+          <div class="case-metrics">
+            <div><b>12,4%</b><span>conversão</span></div>
+            <div><b>2,1s</b><span>carregamento</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="case-card reveal">
+        <div class="case-thumb" style="background:linear-gradient(135deg,#F472B6,#7C5CFC)"><span>ORBIT</span></div>
+        <div class="case-body">
+          <div class="case-tag">SaaS</div>
+          <h3>Plataforma de agendamento</h3>
+          <p>MVP de SaaS desenvolvido em 6 semanas, do design ao deploy.</p>
+          <div class="case-metrics">
+            <div><b>+900</b><span>usuários ativos</span></div>
+            <div><b>6 sem.</b><span>até o MVP</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PLANOS ================= -->
+<section id="planos" class="section-pad">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="dot"></span> Planos</span>
+      <h2>Escolha o plano ideal para o seu momento</h2>
+      <p>Valores ilustrativos — ajuste conforme seu escopo e mercado.</p>
+    </div>
+    <div class="plans-grid">
+      <div class="plan reveal">
+        <div class="p-name">Start</div>
+        <div class="p-price">R$ 1.490<span>/mês</span></div>
+        <div class="p-desc">Ideal para quem está começando a estruturar a presença digital.</div>
+        <ul>
+          <li><span class="check">✓</span> Gestão de 1 rede social</li>
+          <li><span class="check">✓</span> 12 posts por mês</li>
+          <li><span class="check">✓</span> Relatório mensal de resultados</li>
+          <li><span class="check">✓</span> Suporte por WhatsApp</li>
+        </ul>
+        <a href="https://wa.me/5511999999999?text=Quero%20o%20plano%20Start" target="_blank" rel="noopener" class="btn btn-ghost btn-block">Escolher Start</a>
+      </div>
+      <div class="plan featured reveal">
+        <div class="p-name">Growth</div>
+        <div class="p-price">R$ 3.290<span>/mês</span></div>
+        <div class="p-desc">Para marcas que querem crescer com consistência em vários canais.</div>
+        <ul>
+          <li><span class="check">✓</span> Gestão de até 3 redes sociais</li>
+          <li><span class="check">✓</span> 24 posts + stories semanais</li>
+          <li><span class="check">✓</span> Landing page inclusa</li>
+          <li><span class="check">✓</span> Tráfego pago gerenciado</li>
+          <li><span class="check">✓</span> Relatórios quinzenais</li>
+        </ul>
+        <a href="https://wa.me/5511999999999?text=Quero%20o%20plano%20Growth" target="_blank" rel="noopener" class="btn btn-primary btn-block">Escolher Growth</a>
+      </div>
+      <div class="plan reveal">
+        <div class="p-name">Enterprise</div>
+        <div class="p-price">Sob consulta</div>
+        <div class="p-desc">Solução completa: comunicação, sites, SaaS e gestão de contas dedicada.</div>
+        <ul>
+          <li><span class="check">✓</span> Time dedicado ao seu projeto</li>
+          <li><span class="check">✓</span> Desenvolvimento de site ou SaaS</li>
+          <li><span class="check">✓</span> Gerenciamento completo de contas</li>
+          <li><span class="check">✓</span> Estratégia e branding personalizados</li>
+        </ul>
+        <a href="https://wa.me/5511999999999?text=Quero%20falar%20sobre%20o%20plano%20Enterprise" target="_blank" rel="noopener" class="btn btn-ghost btn-block">Falar com um especialista</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DEPOIMENTOS ================= -->
+<section id="depoimentos" class="section-pad" style="background:var(--bg-soft)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="dot"></span> Depoimentos</span>
+      <h2>Quem trabalhou com a gente conta como foi</h2>
+      <p>Substitua pelos depoimentos reais dos seus clientes.</p>
+    </div>
+    <div class="t-grid">
+      <div class="t-card reveal">
+        <div class="t-stars">★★★★★</div>
+        <p class="quote">"A Creative Vision reorganizou toda a nossa comunicação. Em três meses triplicamos o engajamento nas redes."</p>
+        <div class="t-person">
+          <div class="t-avatar">MF</div>
+          <div><div class="t-name">Marina Ferraz</div><div class="t-role">CEO, Nova Co</div></div>
+        </div>
+      </div>
+      <div class="t-card reveal">
+        <div class="t-stars">★★★★★</div>
+        <p class="quote">"O site novo ficou rápido, bonito e converte muito mais que o antigo. Processo transparente do início ao fim."</p>
+        <div class="t-person">
+          <div class="t-avatar">RT</div>
+          <div><div class="t-name">Rafael Torres</div><div class="t-role">Fundador, Urbana</div></div>
+        </div>
+      </div>
+      <div class="t-card reveal">
+        <div class="t-stars">★★★★★</div>
+        <p class="quote">"Precisávamos de um SaaS rápido para validar a ideia. Em semanas tínhamos um produto funcionando e testado."</p>
+        <div class="t-person">
+          <div class="t-avatar">CL</div>
+          <div><div class="t-name">Carla Lopes</div><div class="t-role">COO, Orbit</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section id="faq" class="section-pad">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="dot"></span> Dúvidas frequentes</span>
+      <h2>Perguntas que recebemos com frequência</h2>
+    </div>
+    <div class="faq reveal">
+      <div class="faq-item open">
+        <div class="faq-q">Quanto tempo leva para começar? <span class="plus">+</span></div>
+        <div class="faq-a"><p>Após o diagnóstico inicial, geralmente começamos a produzir e publicar em até 1 semana.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Vocês atendem qualquer segmento? <span class="plus">+</span></div>
+        <div class="faq-a"><p>Sim. Já atendemos e-commerce, serviços, imobiliárias, saúde e startups de tecnologia.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Posso contratar só um serviço específico? <span class="plus">+</span></div>
+        <div class="faq-a"><p>Sim, os planos podem ser combinados. Você pode contratar apenas redes sociais, apenas o site, ou o pacote completo.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Como funciona o suporte e a comunicação? <span class="plus">+</span></div>
+        <div class="faq-a"><p>Você tem um canal direto no WhatsApp com seu gestor de conta, além de reuniões periódicas e relatórios de resultado.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Existe contrato de fidelidade? <span class="plus">+</span></div>
+        <div class="faq-a"><p>Trabalhamos com contratos mensais flexíveis. Detalhes de prazo e condições são combinados na proposta.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA BANNER ================= -->
+<section class="section-pad">
+  <div class="wrap">
+    <div class="cta-banner reveal">
+      <div>
+        <h2>Vamos criar algo memorável para a sua marca?</h2>
+        <p>Papo reto: fale com a gente agora e receba uma proposta personalizada em até 1 dia útil.</p>
+      </div>
+      <a href="https://wa.me/5511999999999?text=Ol%C3%A1!%20Quero%20uma%20proposta%20da%20Creative%20Vision" target="_blank" rel="noopener" class="btn btn-ghost">QUERO MEU PROJETO</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTATO ================= -->
+<section id="contato" class="section-pad">
+  <div class="wrap">
+    <div class="contact-wrap reveal">
+      <div class="contact-info">
+        <span class="eyebrow"><span class="dot"></span> Contato</span>
+        <h2 style="margin-top:18px">Vamos conversar sobre o seu projeto</h2>
+        <p>Escolha o canal que preferir. Respondemos o mais rápido possível, geralmente em até 1 dia útil.</p>
+        <div class="contact-channels">
+          <a class="channel" href="https://wa.me/5511999999999" target="_blank" rel="noopener">
+            <div class="c-ico" style="background:rgba(37,211,102,.15)">💬</div>
+            <div><b>WhatsApp</b><span>+55 11 99999-9999</span></div>
+          </a>
+          <a class="channel" href="mailto:contato@creativevision.com.br">
+            <div class="c-ico" style="background:rgba(124,92,252,.15)">✉️</div>
+            <div><b>E-mail</b><span>contato@creativevision.com.br</span></div>
+          </a>
+          <button type="button" class="channel" id="copyEmailBtn" style="width:100%;text-align:left;font-family:inherit;cursor:pointer">
+            <div class="c-ico" style="background:rgba(245,185,79,.15)">📋</div>
+            <div><b id="copyEmailLabel">Copiar e-mail</b><span>contato@creativevision.com.br</span></div>
+          </button>
+          <a class="channel" href="https://instagram.com/" target="_blank" rel="noopener">
+            <div class="c-ico" style="background:rgba(244,114,182,.15)">📷</div>
+            <div><b>Instagram</b><span>@creativevision</span></div>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <form id="contactForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="f-name">Nome</label>
+              <input id="f-name" type="text" placeholder="Seu nome" required>
+            </div>
+            <div class="form-group">
+              <label for="f-phone">WhatsApp</label>
+              <input id="f-phone" type="tel" placeholder="(11) 90000-0000" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="f-email">E-mail</label>
+            <input id="f-email" type="email" placeholder="voce@empresa.com" required>
+          </div>
+          <div class="form-group">
+            <label for="f-service">Serviço de interesse</label>
+            <select id="f-service">
+              <option>Gestão de Redes Sociais</option>
+              <option>Sites & Landing Pages</option>
+              <option>Desenvolvimento de SaaS</option>
+              <option>Comunicação & Branding</option>
+              <option>Gerenciamento de Contas</option>
+              <option>Pacote completo</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="f-msg">Mensagem</label>
+            <textarea id="f-msg" placeholder="Conte um pouco sobre seu projeto..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Enviar mensagem</button>
+          <p class="form-note">Ao enviar, também abrimos o WhatsApp com sua mensagem pronta para confirmar o envio.</p>
+        </form>
+        <div class="form-success" id="formSuccess">
+          <div class="ok-ico">✓</div>
+          <h3>Mensagem pronta!</h3>
+          <p>Confirme o envio pelo WhatsApp que abrimos para você.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#top" class="brand"><span class="mark">CV</span>Creative Vision</a>
+        <p>Agência digital de redes sociais, sites, landing pages, SaaS, comunicação e gerenciamento de contas.</p>
+        <div class="foot-social">
+          <a href="https://instagram.com/" target="_blank" rel="noopener">📷</a>
+          <a href="https://linkedin.com/" target="_blank" rel="noopener">in</a>
+          <a href="https://wa.me/5511999999999" target="_blank" rel="noopener">💬</a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h4>Serviços</h4>
+        <a href="#servicos">Redes Sociais</a>
+        <a href="#servicos">Sites & Landing Pages</a>
+        <a href="#servicos">SaaS</a>
+        <a href="#servicos">Comunicação</a>
+      </div>
+      <div class="foot-col">
+        <h4>Empresa</h4>
+        <a href="#cases">Cases</a>
+        <a href="#processo">Processo</a>
+        <a href="#depoimentos">Depoimentos</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="foot-col">
+        <h4>Contato</h4>
+        <a href="mailto:contato@creativevision.com.br">contato@creativevision.com.br</a>
+        <a href="https://wa.me/5511999999999">+55 11 99999-9999</a>
+        <a href="#contato">Fale conosco</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span id="year"></span>
+      <span>Feito com foco em resultado.</span>
+    </div>
+  </div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/5511999999999?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20Creative%20Vision" target="_blank" rel="noopener" aria-label="WhatsApp">💬</a>
+
+<script>
+document.getElementById('year').textContent = '© ' + new Date().getFullYear() + ' Creative Vision. Todos os direitos reservados.';
+
+// header scroll state
+const header = document.getElementById('siteHeader');
+window.addEventListener('scroll', () => {
+  header.classList.toggle('scrolled', window.scrollY > 30);
+});
+
+// mobile menu
+const burger = document.getElementById('burger');
+const mobileMenu = document.getElementById('mobileMenu');
+burger.addEventListener('click', () => {
+  burger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+});
+mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  burger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+}));
+
+// scroll reveal
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// animated counters
+const counters = document.querySelectorAll('.counter');
+const countIo = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target;
+    const target = parseInt(el.dataset.target, 10);
+    const suffix = el.dataset.suffix || '';
+    const duration = 1200;
+    const start = performance.now();
+    function tick(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      el.textContent = Math.round(progress * target) + suffix;
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    countIo.unobserve(el);
+  });
+}, { threshold: 0.5 });
+counters.forEach(el => countIo.observe(el));
+
+// copy email button
+const copyBtn = document.getElementById('copyEmailBtn');
+if (copyBtn) {
+  copyBtn.addEventListener('click', async () => {
+    const email = 'contato@creativevision.com.br';
+    const label = document.getElementById('copyEmailLabel');
+    try {
+      await navigator.clipboard.writeText(email);
+      label.textContent = 'E-mail copiado!';
+      setTimeout(() => { label.textContent = 'Copiar e-mail'; }, 2000);
+    } catch (err) {
+      window.location.href = 'mailto:' + email;
+    }
+  });
+}
+
+// faq accordion
+document.querySelectorAll('.faq-item').forEach(item => {
+  const q = item.querySelector('.faq-q');
+  const a = item.querySelector('.faq-a');
+  if (item.classList.contains('open')) a.style.maxHeight = a.scrollHeight + 'px';
+  q.addEventListener('click', () => {
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(other => {
+      other.classList.remove('open');
+      other.querySelector('.faq-a').style.maxHeight = null;
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      a.style.maxHeight = a.scrollHeight + 'px';
+    }
+  });
+});
+
+// contact form -> builds a WhatsApp message (no backend on static hosting)
+const form = document.getElementById('contactForm');
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const name = document.getElementById('f-name').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const service = document.getElementById('f-service').value;
+  const msg = document.getElementById('f-msg').value.trim();
+
+  const text = `Olá! Meu nome é ${name}.%0AWhatsApp: ${phone}%0AE-mail: ${email}%0AInteresse: ${service}%0AMensagem: ${msg || '(sem mensagem adicional)'}`;
+  const waNumber = '5511999999999'; // troque pelo número real da agência
+
+  form.style.display = 'none';
+  document.getElementById('formSuccess').style.display = 'block';
+  window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(decodeURIComponent(text))}`, '_blank');
+});
+</script>
+</body>
+</html>

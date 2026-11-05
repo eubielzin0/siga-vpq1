@@ -526,9 +526,9 @@ svg{display:block}
     <div class="sub">Painel de Coleta — acesso da equipe</div>
     <div class="gold-line"></div>
     <div class="field-label">Usuário</div>
-    <input class="in" id="userIn" placeholder="seu@email.com" autocapitalize="none" autocomplete="username" spellcheck="false">
+    <input class="in" id="userIn" placeholder="gabriel.lider ou e-mail completo" autocapitalize="none" autocomplete="username" spellcheck="false">
     <div class="field-label">Senha</div>
-    <input class="in" id="passIn" type="password" inputmode="numeric" placeholder="••••••" autocomplete="current-password">
+    <input class="in" id="passIn" type="password" placeholder="••••••" autocomplete="current-password">
     <div class="err" id="loginErr"></div>
     <button class="pbtn" id="loginBtn"><span class="spin"></span><span id="loginLbl">Entrar</span></button>
   </div>
@@ -690,7 +690,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 /* ================= CONEXÃO ================= */
 const SUPABASE_URL = "https://nvtmwabvrukyidusmfdg.supabase.co";
 const SUPABASE_KEY = "sb_publishable_d9EnRDnlPTjRhJlb4dI5Nw_iDnbJky6";
-const EMAIL_DOMAIN  = "@sigaalqia.app";
+const EMAIL_DOMAIN  = "@bossanovamall.com";
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth:{ persistSession:true, autoRefreshToken:true, storage: window.localStorage }
 });

@@ -134,6 +134,7 @@ header.show{display:block}
   display:flex;align-items:center;justify-content:center;transition:.15s;color:#fff}
 .st-body{flex:1;min-width:0}
 .st-name{font-size:14.5px;font-weight:600}
+.st-ident{font-size:10px;color:var(--gray);margin-top:3px;line-height:1.35;font-weight:500;letter-spacing:.005em}
 .st-meta{font-size:11.5px;color:var(--gray);margin-top:2px;display:none;font-variant-numeric:tabular-nums}
 .store.coletado{border-left-color:var(--g-52)}
 .store.coletado .st-ico{background:var(--g-52);border-color:var(--g-52)}
@@ -702,7 +703,7 @@ let bnmStores=[];
 // Apenas lojas ATIVAS com COLETA=SIM entram na rota. As demais permanecem no cadastro administrativo.
 async function loadCatalogo(){
   const {data,error}=await sb.from("lojas")
-    .select("codigo_cadastro,luc,nome,pavimento,bloco,ordem_rota,napp,informa,coleta,pos,presencial,ativa")
+    .select("codigo_cadastro,luc,instrumento,nome,pavimento,bloco,ordem_rota,napp,informa,coleta,pos,presencial,ativa")
     .order("codigo_cadastro",{ascending:true});
   if(error) throw error;
   bnmStores=data||[];
@@ -914,7 +915,8 @@ $("camIn").onchange=async e=>{
     if(up.error) throw up.error;
     const ins=await sb.from("evidencias").insert({
       auditor_id:current.id, auditor_nome:current.nome, rota:sel.route, data:sel.date,
-      loja:pickLoja, tipo:pickTipo, path, tamanho:blob.size });
+      loja:pickLoja, luc:bnmStores.find(r=>r.nome===pickLoja)?.luc||null,
+      tipo:pickTipo, path, tamanho:blob.size });
     if(ins.error) throw ins.error;
     evCount[slug(pickLoja)]=(evCount[slug(pickLoja)]||0)+1;
     $("upTxt").textContent="✓ Evidência registrada"; render();
@@ -1154,9 +1156,9 @@ function renderCadastroLojas(v){
   h.textContent=`Cadastro BNM — ${bnmStores.length} registros (${count} ativos)`;
   wrap.appendChild(h);
   const note=document.createElement("p"); note.style.cssText="font-size:12px;opacity:.8;margin:10px 0";
-  note.textContent="LUC e pavimento permanecem pendentes. Na rota entram somente lojas ativas com Coleta = SIM.";
+  note.textContent="LUC e instrumento conferidos. Pavimentos e ordem da rota física ainda precisam ser validados. Na rota entram apenas lojas ativas com Coleta = SIM.";
   wrap.appendChild(note);
-  const q=document.createElement("input"); q.className="in"; q.placeholder="Pesquisar loja ou código interno";
+  const q=document.createElement("input"); q.className="in"; q.placeholder="Pesquisar loja, LUC ou instrumento";
   wrap.appendChild(q);
   const list=document.createElement("div"); wrap.appendChild(list);
   function draw(){
@@ -1164,13 +1166,15 @@ function renderCadastroLojas(v){
     const needle=q.value.trim().toLocaleLowerCase("pt-BR");
     const dados=bnmStores.filter(r=>!needle ||
       r.nome.toLocaleLowerCase("pt-BR").includes(needle) ||
-      (r.codigo_cadastro||"").toLocaleLowerCase("pt-BR").includes(needle));
+      (r.codigo_cadastro||"").toLocaleLowerCase("pt-BR").includes(needle) ||
+      (r.luc||"").toLocaleLowerCase("pt-BR").includes(needle) ||
+      (r.instrumento||"").toLocaleLowerCase("pt-BR").includes(needle));
     dados.forEach(r=>{
       const item=document.createElement("div");item.style.cssText="padding:12px 0;border-bottom:1px solid rgba(255,255,255,.12)";
       const title=document.createElement("div");title.style.cssText="font-weight:700;font-size:14px";
       title.textContent=`${r.nome} · ${r.codigo_cadastro} · ${r.ativa?"Ativo":"Inativo"}`; item.appendChild(title);
       const secondary=document.createElement("div");secondary.style.cssText="font-size:11px;opacity:.7;margin:4px 0";
-      secondary.textContent=`LUC: ${r.luc||"pendente"} · Pavimento: ${r.pavimento||"pendente"}`;
+      secondary.textContent=`LUC ${r.luc||"—"} · Instrumento ${r.instrumento||"—"} · Pavimento ${r.pavimento||"a definir"}`;
       item.appendChild(secondary);
       const flags=document.createElement("div");flags.style.cssText="font-size:11px;line-height:1.65;opacity:.9";
       flags.textContent=[["NAPP",r.napp],["INFORMA",r.informa],["COLETA",r.coleta],["POS",r.pos],["PRESENCIAL",r.presencial]]
@@ -1304,13 +1308,16 @@ function render(){
     const sc=card.querySelector(".stores");
     blk.s.forEach(name=>{
       const id=slug(name), mk=state.marks[id]||{st:"pendente"};
+      const lojaInfo=bnmStores.find(loja=>loja.nome===name);
       const row=document.createElement("div"); row.className="store "+mk.st;
       const tag=mk.st==="coletado"?"Coletado":mk.st==="impedimento"?"Impedim.":"Tocar";
       const meta=mk.ts?(mk.st==="impedimento"&&mk.reason?`${mk.reason} · ${mk.ts}`:mk.ts):"";
       const nf=evCount[id]||0;
       row.innerHTML=`<div class="st-ico">${iconFor(mk.st)}</div>
-        <div class="st-body"><div class="st-name">${name}</div><div class="st-meta">${meta}</div></div>
+        <div class="st-body"><div class="st-name"></div><div class="st-ident"></div><div class="st-meta">${meta}</div></div>
         <div class="st-tag">${tag}</div>`;
+      row.querySelector(".st-name").textContent=name;
+      row.querySelector(".st-ident").textContent=lojaInfo ? `LUC ${lojaInfo.luc||"—"} · Instr. ${lojaInfo.instrumento||"—"}` : "";
       row.onclick=()=>cycle(name);
       const cam=document.createElement("button"); cam.className="cam"+(nf?" has":"");
       cam.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>${nf?`<span class="cnt">${nf}</span>`:""}`;
@@ -1343,7 +1350,8 @@ function iconFor(st){
 /* --- marcar (local na hora + fila pra nuvem) --- */
 function rowFor(loja,st,motivo){
   return { auditor_id:current.id, auditor_nome:current.nome, rota:sel.route, data:sel.date,
-           loja, status:st, motivo:motivo||null, marcado_em:new Date().toISOString() };
+           loja, luc:bnmStores.find(r=>r.nome===loja)?.luc||null,
+           status:st, motivo:motivo||null, marcado_em:new Date().toISOString() };
 }
 function cycle(loja){
   const id=slug(loja);

@@ -1,7 +1,7 @@
 {
-  "name": "SIGA · VPQ — Coleta de Vendas",
-  "short_name": "SIGA · VPQ",
-  "description": "Painel de coleta da Auditoria — Via Parque Shopping",
+  "name": "SIGA ALQIA 2.0 — Coleta Bossa Nova Mall",
+  "short_name": "SIGA ALQIA",
+  "description": "Painel de auditoria e coleta — Bossa Nova Mall",
   "lang": "pt-BR",
   "start_url": "./",
   "scope": "./",

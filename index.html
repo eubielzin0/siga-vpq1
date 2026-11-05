@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SIGA · VPQ — Painel de Coleta | Via Parque Shopping</title>
+<title>SIGA · ALQIA 2.0 — Painel de Coleta | Bossa Nova Mall</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#0F2419">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="SIGA · VPQ">
+<meta name="apple-mobile-web-app-title" content="SIGA · ALQIA 2.0">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link rel="icon" type="image/png" href="./favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -365,7 +365,7 @@ header.show{display:block}
   padding:13px 16px;font-size:13px;font-weight:700;display:none;align-items:center;gap:10px}
 .up-bar.show{display:flex}
 .up-bar .spin{width:15px;height:15px;border-width:2px}
-/* ---------- SPLASH (marca SIGA · VPQ — animação de 5 tempos) ---------- */
+/* ---------- SPLASH (marca SIGA · ALQIA 2.0 — animação de 5 tempos) ---------- */
 #splash{position:fixed;inset:0;background:var(--siga-bg);z-index:70;display:flex;
   flex-direction:column;align-items:center;justify-content:center}
 #splash.out{animation:fadeOut .5s ease forwards}
@@ -435,7 +435,7 @@ svg{display:block}
 </head>
 <body>
 
-<div id="boot"><div class="spin"></div><div class="bt">Carregando SIGA · VPQ…</div></div>
+<div id="boot"><div class="spin"></div><div class="bt">Carregando SIGA · ALQIA 2.0…</div></div>
 
 <!-- SPLASH -->
 <div id="splash" style="display:none">
@@ -444,13 +444,13 @@ svg{display:block}
     <div class="sp-div"></div>
     <div class="sp-words">
       <img class="sp-siga" src="./mark-siga.png" alt="siga">
-      <img class="sp-vpq" src="./mark-vpq.png" alt="VPQ">
+      <span class="sp-vpq" style="font-size:15px;font-weight:800;color:#fff;letter-spacing:.08em">ALQIA 2.0</span>
     </div>
   </div>
   <div class="sp-tag">Sistema Integrado de Gestão da <b>Auditoria</b></div>
   <div class="parts">
-    <img class="wm" id="wmVpq" src="./logo-viaparque.png" alt="Via Parque">
-    <span class="wm-t" id="wmVpqT" style="display:none">Via Parque</span>
+    <span class="wm" id="wmVpq" style="font-weight:800;color:white">Bossa Nova Mall</span>
+    <span class="wm-t" id="wmVpqT" style="display:none">Bossa Nova Mall</span>
     <div class="pdiv"></div>
     <img class="wm" id="wmAlq" src="./logo-alqia.png" alt="Alqia">
     <span class="wm-t" id="wmAlqT" style="display:none">Alqia</span>
@@ -462,7 +462,7 @@ svg{display:block}
   <div class="box">
     <div class="wl-mark">
       <img src="./mark-mono.png" alt="SIGA">
-      <div><div class="wt">SIGA · VPQ</div><div class="ws">SISTEMA INTEGRADO DE GESTÃO DA AUDITORIA</div></div>
+      <div><div class="wt">SIGA · ALQIA 2.0</div><div class="ws">SISTEMA INTEGRADO DE GESTÃO DA AUDITORIA</div></div>
     </div>
     <h1>Bem-vindo</h1>
     <div class="wl-p">O sistema de coleta de vendas da Auditoria. Rota, marcação e evidência
@@ -479,7 +479,7 @@ svg{display:block}
 
     <button class="pbtn" id="wlBtn">Acessar o sistema</button>
     <div class="wl-ft">
-      <img src="./logo-viaparque.png" alt="Via Parque">
+      <span style="font-size:12px;font-weight:700">Bossa Nova Mall</span>
       <div class="pdiv" style="height:14px"></div>
       <img src="./logo-alqia.png" alt="Alqia">
     </div>
@@ -521,11 +521,11 @@ svg{display:block}
 <div class="screen" id="login">
   <div class="box">
     <img src="./mark-mono.png" alt="SIGA" style="height:56px;margin-bottom:14px">
-    <h1>SIGA · VPQ</h1>
+    <h1>SIGA · ALQIA 2.0</h1>
     <div class="sub">Painel de Coleta — acesso da equipe</div>
     <div class="gold-line"></div>
     <div class="field-label">Usuário</div>
-    <input class="in" id="userIn" placeholder="seu.usuario" autocapitalize="none" autocomplete="username" spellcheck="false">
+    <input class="in" id="userIn" placeholder="seu@email.com" autocapitalize="none" autocomplete="username" spellcheck="false">
     <div class="field-label">Senha</div>
     <input class="in" id="passIn" type="password" inputmode="numeric" placeholder="••••••" autocomplete="current-password">
     <div class="err" id="loginErr"></div>
@@ -541,8 +541,7 @@ svg{display:block}
     <div class="gold-line" style="margin:18px 0 4px"></div>
     <div class="field-label">Rota</div>
     <div class="opt-grid" id="routeGrid">
-      <button class="opt" data-route="L1"><span>Rota L1</span><small>60 lojas • 6 blocos</small></button>
-      <button class="opt" data-route="L2"><span>Rota L2</span><small>27 lojas • 3 blocos</small></button>
+      <button class="opt" data-route="BNM"><span>Rota BNM</span><small>Carregando lojas...</small></button>
     </div>
     <div class="field-label">Data da coleta</div>
     <input type="date" id="dateIn" class="in">
@@ -569,6 +568,7 @@ svg{display:block}
       <button class="tab" data-v="coleta">Coleta</button>
       <button class="tab" data-v="auditores">Auditores</button>
       <button class="tab" data-v="evidencias">Evidências</button>
+      <button class="tab" data-v="cadastro">Lojas BNM</button>
     </div>
   </div>
   <div class="wrap" id="admView"></div>
@@ -687,32 +687,42 @@ svg{display:block}
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 /* ================= CONEXÃO ================= */
-const SUPABASE_URL = "https://qnvehmabyekmlseinwug.supabase.co";
-const SUPABASE_KEY = "sb_publishable_BYUmYrj1r_oJlUkC8qduJg_IE_Yba-Q";
-const EMAIL_DOMAIN  = "@sigavpq.app";
+const SUPABASE_URL = "https://nvtmwabvrukyidusmfdg.supabase.co";
+const SUPABASE_KEY = "sb_publishable_d9EnRDnlPTjRhJlb4dI5Nw_iDnbJky6";
+const EMAIL_DOMAIN  = "@sigaalqia.app";
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth:{ persistSession:true, autoRefreshToken:true, storage: window.localStorage }
 });
 
 /* ================= DADOS ================= */
-const ROUTES = {
-  L1:[
-    {name:"Bloco 1 — Praça de Alimentação",win:"10h10–10h35",s:["SPOLETO","KONI STORE","PATRONI","GAME POINT","COSECHAS","OFFICE GOURMET","BATATA INGLESA","KFC","BOB'S","BURGER KING","MONTANA GRILL EXPRESS","BILLY THE GRILL","PORTO DO SABOR","SASS GRILL","TEMPUR SEALY"]},
-    {name:"Bloco 2 — Corredor Game Point",win:"10h35–11h00",s:["ROLLER PATINS","FORMATTINHO","STAR BRINK","ABRACADABRA","BABALU","FINI","HAVAIANAS","MELISSA","CELLAIRIS","BEMJÁ","MILK MOO","LUPO"]},
-    {name:"Bloco 3 — Corredor Cobasi",win:"11h00–11h25",s:["NUTTY UP","ESPAÇO RUBRO NEGRO","FÁBRICA DE BOLO VÓ ALZIRA","GIGANTE DA COLINA","WINK","KOPENHAGEN","ÓTICAS CAROL","FIRST CLASS","LIFE BY VIVARA","TUPPERWARE","COBASI"]},
-    {name:"Bloco 4 — Drogarias",win:"11h25–11h50",s:["DROGASMIL","DROGA RAIA","REI DO MATE","ORTOBOM","SUMMERVILLE","DAISO","VIVO"]},
-    {name:"Bloco 5 — Serviços",win:"11h50–12h20",s:["BAGAGGIO","ACIUM","LOTÉRICA","BORA LÊ","FEIRÃO SLEEP TIME","D UNHAS","PILOTINHOS KIDS"]},
-    {name:"Bloco 6 — Retornos",win:"12h20–13h00",s:["GOTRIX","BARDANA","BAURUCAS","DELÍCIAS PORTUGUESAS","CHAVEIRO OPEN MALL","BIO MUNDO","ABRA CASA","WASH ON"]}
-  ],
-  L2:[
-    {name:"Bloco 1 — Entrada L2",win:"",s:["OUTBACK","SLEEP TIME COLCHÕES","ARRANJOS EXPRESS","BARBEARIA DOM HELIO","MR. CAT","FELIPE NASCIMENTO","PAPEL MACHÊ","LORELAY","YUKI COZINHA JAPONESA","BRASEIRO GRILL","BEL COSMÉTICOS","BROWNIERIA L2","SOULIER","O BOTICÁRIO","ESCAPE 60"]},
-    {name:"Bloco 2 — Corredor Central",win:"",s:["BOBZOOM","LEITURA","FACE SPA","ESPAÇO LASER","QUALYPÉ","RI HAPPY BRINQUEDOS","TOY DRIVERS"]},
-    {name:"Bloco 3 — Ala Oeste",win:"",s:["FIAMMETTA","SIMMONS COLCHÕES","VOLTZ PARKOUR","ROYAL VISTOS","EURO COLCHÕES"]}
-  ]
-};
+let ROUTES={BNM:[{name:"Lojas com coleta — localização a definir",win:"",s:[]}]};
+let bnmStores=[];
+
+// O cadastro oficial vem do Supabase BNM, nunca da lista fixa VPQ.
+// Apenas lojas ATIVAS com COLETA=SIM entram na rota. As demais permanecem no cadastro administrativo.
+async function loadCatalogo(){
+  const {data,error}=await sb.from("lojas")
+    .select("codigo_cadastro,luc,nome,pavimento,bloco,ordem_rota,napp,informa,coleta,pos,presencial,ativa")
+    .order("codigo_cadastro",{ascending:true});
+  if(error) throw error;
+  bnmStores=data||[];
+  const grupos=new Map();
+  const candidatas=bnmStores.filter(r=>r.ativa&&r.coleta)
+    .sort((a,b)=>(a.ordem_rota||0)-(b.ordem_rota||0) ||
+      a.nome.localeCompare(b.nome,"pt-BR"));
+  candidatas.forEach(r=>{
+    const loc=r.pavimento ? `Pavimento ${r.pavimento}` : "Localização a definir";
+    const titulo=r.bloco ? `${loc} — ${r.bloco}` : loc;
+    if(!grupos.has(titulo)) grupos.set(titulo,[]);
+    grupos.get(titulo).push(r.nome);
+  });
+  ROUTES={BNM:[...grupos.entries()].map(([name,s])=>({name,win:"",s}))};
+  const grid=$("routeGrid");
+  grid.innerHTML=`<button class="opt" data-route="BNM"><span>Rota BNM</span><small>${candidatas.length} lojas com coleta • sequência provisória</small></button>`;
+}
 const REASONS=["Gerente ausente","Caixa não fechado","Sistema indisponível","Loja fechada","Aguardando fechamento","Outro"];
-const CHECKLIST=["Foto realizada em todas as coletas","Comprovante impresso","Sitera atualizado","Trello atualizado","Ocorrência registrada (se houver)"];
-const COORD_WPP="5521994045531";
+const CHECKLIST=["Evidências anexadas quando aplicável","Informações conferidas","Ocorrências registradas","Pendências comunicadas","Sincronização conferida"];
+const COORD_WPP=""; // cadastrar contato oficial BNM antes de ativar envio
 
 /* ================= ESTADO ================= */
 let current=null;                       // {id,nome,funcao,papel}
@@ -784,7 +794,9 @@ $("loginBtn").onclick=async()=>{
   if(error){ showErr("Usuário ou senha incorretos."); return; }
   const prof=await loadProfile(data.user.id);
   if(!prof){ showErr("Perfil não encontrado. Avise a coordenação."); await sb.auth.signOut(); return; }
-  current=prof; loadQueue(); routeUser();
+  current=prof; loadQueue();
+  try { await loadCatalogo(); routeUser(); }
+  catch(e){ showErr("Falha ao carregar lojas do Bossa Nova. Verifique conexão e permissões."); await sb.auth.signOut(); }
 };
 function showErr(m){ const e=$("loginErr"); e.textContent=m; e.classList.add("show"); }
 $("passIn").addEventListener("keydown",e=>{ if(e.key==="Enter") $("loginBtn").click(); });
@@ -1058,7 +1070,7 @@ $("evDl").onclick=async()=>{
     const out=await zip.generateAsync({type:"blob"});
     const a=document.createElement("a");
     a.href=URL.createObjectURL(out);
-    a.download=`SIGA-VPQ_evidencias_${evPath.mes}${evFiltro!=="todos"?"_"+slug(evFiltro):""}.zip`;
+    a.download=`SIGA-ALQIA-BNM_evidencias_${evPath.mes}${evFiltro!=="todos"?"_"+slug(evFiltro):""}.zip`;
     a.click(); URL.revokeObjectURL(a.href);
   }catch(e){ alert("Não foi possível gerar o download. Tente novamente."); }
   b.disabled=false; b.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Baixar`;
@@ -1129,6 +1141,44 @@ function renderAdmin(){
   if(admView==="coleta")      return renderColeta(v);
   if(admView==="auditores")   return renderAuditores(v);
   if(admView==="evidencias")  return renderEvidencias(v);
+  if(admView==="cadastro")     return renderCadastroLojas(v);
+}
+
+
+/* Cadastro de classificação disponibilizado apenas ao perfil coordenador */
+function renderCadastroLojas(v){
+  v.innerHTML="";
+  const wrap=document.createElement("div"); wrap.className="acard";
+  const count=bnmStores.filter(r=>r.ativa).length;
+  const h=document.createElement("div"); h.className="section-tt";
+  h.textContent=`Cadastro BNM — ${bnmStores.length} registros (${count} ativos)`;
+  wrap.appendChild(h);
+  const note=document.createElement("p"); note.style.cssText="font-size:12px;opacity:.8;margin:10px 0";
+  note.textContent="LUC e pavimento permanecem pendentes. Na rota entram somente lojas ativas com Coleta = SIM.";
+  wrap.appendChild(note);
+  const q=document.createElement("input"); q.className="in"; q.placeholder="Pesquisar loja ou código interno";
+  wrap.appendChild(q);
+  const list=document.createElement("div"); wrap.appendChild(list);
+  function draw(){
+    list.replaceChildren();
+    const needle=q.value.trim().toLocaleLowerCase("pt-BR");
+    const dados=bnmStores.filter(r=>!needle ||
+      r.nome.toLocaleLowerCase("pt-BR").includes(needle) ||
+      (r.codigo_cadastro||"").toLocaleLowerCase("pt-BR").includes(needle));
+    dados.forEach(r=>{
+      const item=document.createElement("div");item.style.cssText="padding:12px 0;border-bottom:1px solid rgba(255,255,255,.12)";
+      const title=document.createElement("div");title.style.cssText="font-weight:700;font-size:14px";
+      title.textContent=`${r.nome} · ${r.codigo_cadastro} · ${r.ativa?"Ativo":"Inativo"}`; item.appendChild(title);
+      const secondary=document.createElement("div");secondary.style.cssText="font-size:11px;opacity:.7;margin:4px 0";
+      secondary.textContent=`LUC: ${r.luc||"pendente"} · Pavimento: ${r.pavimento||"pendente"}`;
+      item.appendChild(secondary);
+      const flags=document.createElement("div");flags.style.cssText="font-size:11px;line-height:1.65;opacity:.9";
+      flags.textContent=[["NAPP",r.napp],["INFORMA",r.informa],["COLETA",r.coleta],["POS",r.pos],["PRESENCIAL",r.presencial]]
+        .map(([n,val])=>`${n}: ${val?"SIM":"NÃO"}`).join(" · ");
+      item.appendChild(flags);list.appendChild(item);
+    });
+  }
+  q.oninput=draw; draw();v.appendChild(wrap);
 }
 
 function renderConsolidado(v){
@@ -1167,11 +1217,11 @@ function renderConsolidado(v){
 function renderColeta(v){
   v.innerHTML="";
   const seg=document.createElement("div"); seg.className="seg";
-  ["todas","L1","L2"].forEach(r=>{ const b=document.createElement("button");
+  ["todas",...Object.keys(ROUTES)].forEach(r=>{ const b=document.createElement("button");
     b.textContent=r==="todas"?"Todas":"Rota "+r; b.className=admSegRota===r?"on":"";
     b.onclick=()=>{ admSegRota=r; renderColeta(v); }; seg.appendChild(b); });
   v.appendChild(seg);
-  const rotas = admSegRota==="todas" ? ["L1","L2"] : [admSegRota];
+  const rotas = admSegRota==="todas" ? Object.keys(ROUTES) : [admSegRota];
   let any=false;
   rotas.forEach(r=>{
     const rows=admData.coletas.filter(x=>x.rota===r);
@@ -1325,7 +1375,7 @@ function counts(){ let c=0,i=0,t=0;
 function updateStats(){ const k=counts(); $("sCol").textContent=k.c; $("sImp").textContent=k.i; $("sPen").textContent=k.p; }
 function updateHeader(){
   const k=counts(); updateStats();
-  $("hdRoute").innerHTML=`Rota ${sel.route} <span class="badge">SIGA · VPQ</span>`;
+  $("hdRoute").innerHTML=`Rota ${sel.route} <span class="badge">SIGA · ALQIA 2.0</span>`;
   const dt=new Date(sel.date+"T00:00").toLocaleDateString("pt-BR",{day:"2-digit",month:"short"});
   $("hdLine2").innerHTML=`<span>${current.nome}</span><span class="dot-sep"></span><span>${dt}</span><span class="dot-sep"></span><span class="hd-clock" id="clk">${nowHM()}</span>`;
   drawRing(k.t?(k.c+k.i)/k.t:0); drawPulse(k);
@@ -1379,7 +1429,7 @@ function buildSheet(){
 function buildReport(){
   const k=counts();
   const dt=new Date(sel.date+"T00:00").toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"});
-  let txt=`SIGA · VPQ — COLETA · Rota ${sel.route}\n${current.nome} (${current.funcao}) • ${dt}\n`;
+  let txt=`SIGA · ALQIA 2.0 — COLETA · Rota ${sel.route}\n${current.nome} (${current.funcao}) • ${dt}\n`;
   txt+=`Coletadas: ${k.c}/${k.t} · Impedimentos: ${k.i} · Pendentes: ${k.p}\n`;
   const imp=[],pen=[];
   ROUTES[sel.route].forEach(b=>b.s.forEach(s=>{ const mk=state.marks[slug(s)];
@@ -1405,7 +1455,7 @@ $("finBtn").onclick=async()=>{
 };
 $("summaryBtn").onclick=openSheet;
 $("overlay").onclick=()=>{ closeSheet(); closePick(); };
-$("waBtn").onclick=()=>window.open(`https://wa.me/${COORD_WPP}?text=${encodeURIComponent(buildReport())}`,"_blank");
+$("waBtn").onclick=()=>{ if(!COORD_WPP){ alert("Contato do gestor ainda não configurado."); return; } window.open(`https://wa.me/${COORD_WPP}?text=${encodeURIComponent(buildReport())}`,"_blank"); };
 $("copyBtn").onclick=async()=>{ const t=buildReport();
   try{ await navigator.clipboard.writeText(t); }catch(e){
     const ta=document.createElement("textarea"); ta.value=t; document.body.appendChild(ta); ta.select();
@@ -1525,7 +1575,7 @@ function playSplash(){
   const {data:{session}}=await sb.auth.getSession();
   if(session){
     const prof=await loadProfile(session.user.id);
-    if(prof){ current=prof; loadQueue(); $("boot").classList.add("hide"); routeUser(); return; }
+    if(prof){ current=prof; loadQueue(); try { await loadCatalogo(); $("boot").classList.add("hide"); routeUser(); return; } catch(e){ await sb.auth.signOut(); } }
   }
   $("boot").classList.add("hide");
   await playSplash();

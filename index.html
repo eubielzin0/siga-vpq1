@@ -1253,6 +1253,8 @@ function renderEvid(){
   v.innerHTML="";
   list.forEach(r=>{
     const c=document.createElement("div"); c.className="msg";
+    const posRotulo=r.tipo==="POS"&&r.path.split("/").length>=7?
+      r.path.split("/")[5].replace(/-/g," "):"";
     c.innerHTML=`<div class="msg-hd">
         <div class="ma">${initials(r.auditor_nome)}</div>
         <span class="mn">${r.auditor_nome||"—"}</span>
@@ -1260,7 +1262,7 @@ function renderEvid(){
         <span class="mt">${hm(r.criado_em)}</span>
       </div>
       <img loading="lazy" alt="${r.tipo} — ${r.loja}">
-      <div class="msg-ft"><span class="mf">${r.rota?"Rota "+r.rota+" · ":""}${(r.tamanho/1024|0)} KB</span></div>`;
+      <div class="msg-ft"><span class="mf">${posRotulo?"POS: "+posRotulo+" · ":""}${r.rota?"Rota "+r.rota+" · ":""}${(r.tamanho/1024|0)} KB</span></div>`;
     if(isCoord){
       const b=document.createElement("button"); b.className="del"; b.textContent="Excluir";
       b.onclick=async()=>{

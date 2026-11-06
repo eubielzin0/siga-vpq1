@@ -744,6 +744,10 @@ const show=id=>$(id).classList.add("show");
 const hide=id=>$(id).classList.remove("show");
 const initials=n=>(n||"?").trim().slice(0,1).toUpperCase();
 const nowHM=()=>{const d=new Date();return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;};
+const todayLocal=()=>{
+  const d=new Date();
+  return [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-");
+};
 const lsKey=()=>`siga:${current?.id}:${sel.route}:${sel.date}`;
 const qKey =()=>`siga-queue:${current?.id}`;
 
@@ -827,7 +831,7 @@ function openSetup(){
   [...rg.children].forEach(b=>{ b.classList.remove("on");
     b.onclick=()=>{ sel.route=b.dataset.route; [...rg.children].forEach(c=>c.classList.remove("on"));
       b.classList.add("on"); refreshStart(); }; });
-  const d=$("dateIn"); if(!d.value) d.value=new Date().toISOString().slice(0,10);
+  const d=$("dateIn"); if(!d.value) d.value=todayLocal();
   sel.date=d.value; d.onchange=()=>{ sel.date=d.value; refreshStart(); };
   $("startBtn").onclick=()=>start(current.papel==="coordenador");
   $("setupHomeBtn").style.display=current.papel==="coordenador"?"block":"none";
@@ -1104,7 +1108,7 @@ $("evDl").onclick=async()=>{
 $("evBtn").onclick=()=>openEvid("coleta");
 
 /* ================= ADMIN (painel ao vivo) ================= */
-let admView="consolidado", admDate=new Date().toISOString().slice(0,10);
+let admView="consolidado", admDate=todayLocal();
 let admData={coletas:[],turnos:[],equipe:[]}, admChan=null, admSegRota="todas";
 const routeTotal=r=>ROUTES[r]?ROUTES[r].reduce((a,b)=>a+b.s.length,0):0;
 const hm=iso=>new Date(iso).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
@@ -1484,6 +1488,14 @@ $("finBtn").onclick=async()=>{
     rota:sel.route, data:sel.date, total:k.t, coletadas:k.c, impedimentos:k.i, pendentes:k.p,
     checklist_ok:CHECKLIST.filter((_,i)=>state.check[i]).length, checklist_total:CHECKLIST.length,
     finalizado_em:new Date().toISOString() };
+  await flush(); // envia as marcações antes de confirmar o resumo do turno
+  if(queue.length || !navigator.onLine){
+    enqueue({t:"turno",row});
+    state.finalizado=false; saveLocal();
+    $("finLbl").textContent="Aguardando sincronização";
+    alert("Há registros pendentes de sincronização. O turno ficou na fila local e ainda não foi confirmado na nuvem.");
+    b.disabled=false; return;
+  }
   const {error}=await sb.from("turnos").upsert(row,{onConflict:"auditor_id,rota,data"});
   if(error){
     enqueue({t:"turno",row});

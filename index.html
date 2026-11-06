@@ -964,67 +964,177 @@ function goHome(){
 /* ================= EVIDÊNCIAS (Fase 3) ================= */
 const MESES=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
 const BUCKET="evidencias";
-let evCount={};                 // {slug(loja): n}  fotos do dia atual
-let pickLoja=null, pickTipo=null;
+let evCount={};                 // contagem de fotos por loja no dia
+let apuracoesDia=[], posTerminais=[], apuracoesComFoto=new Set();
+let pickLoja=null, pickTipo=null, capturaPendente=null;
 let evPath={mes:null,dia:null,loja:null}, evRows=[], evFiltro="todos", evFrom="coleta";
 
-/* --- comprime antes de subir (protege o limite de 1 GB) --- */
+const moedaBR=new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
+function fmtCentavos(centavos){return moedaBR.format(Number(centavos||0)/100);}
+function parseValorCentavos(texto){
+  let raw=String(texto||"").trim().replace(/R\$\s?/gi,"").replace(/\s/g,"");
+  if(!raw)return null;
+  if(raw.includes(","))raw=raw.replace(/\./g,"").replace(",",".");
+  else if(/^\d{1,3}(?:\.\d{3})+$/.test(raw))raw=raw.replace(/\./g,"");
+  if(!/^\d+(?:\.\d{1,2})?$/.test(raw))return null;
+  const value=Math.round(Number(raw)*100);
+  if(!Number.isSafeInteger(value)||value<0||value>999999999999)return null;
+  return value;
+}
+function lojaDe(nome){return bnmStores.find(x=>x.nome===nome);}
+async function loadTerminais(){
+  const {data,error}=await sb.from("pos_terminais")
+    .select("id,luc,apelido,operadora,codigo,ativo,validado").eq("ativo",true).order("apelido");
+  if(error)throw error;
+  posTerminais=data||[];
+}
+async function loadApuracoes(){
+  const {data,error}=await sb.from("apuracoes")
+    .select("id,auditor_id,auditor_nome,luc,loja,rota,data,tipo,terminal_id,chave,valor_centavos,atualizado_em")
+    .eq("data",sel.date);
+  if(error)throw error;
+  apuracoesDia=data||[];
+}
+async function loadEvCount(){
+  evCount={};apuracoesComFoto=new Set();
+  const {data,error}=await sb.from("evidencias").select("loja,apuracao_id").eq("data",sel.date);
+  if(error)throw error;
+  (data||[]).forEach(r=>{
+    const k=slug(r.loja);evCount[k]=(evCount[k]||0)+1;
+    if(r.apuracao_id)apuracoesComFoto.add(r.apuracao_id);
+  });
+}
+/* Fotos: compressão antes do upload, sem leitura de valores por OCR. */
 async function compress(file,maxW=1280,q=0.72){
   try{
     const img=await createImageBitmap(file);
     const sc=Math.min(1,maxW/Math.max(img.width,img.height));
     const w=Math.round(img.width*sc), h=Math.round(img.height*sc);
-    const c=document.createElement("canvas"); c.width=w; c.height=h;
+    const c=document.createElement("canvas");c.width=w;c.height=h;
     c.getContext("2d").drawImage(img,0,0,w,h);
     const b=await new Promise(r=>c.toBlob(r,"image/jpeg",q));
     return b||file;
-  }catch(e){ return file; }
+  }catch(e){return file;}
 }
-
-/* --- contagem de fotos por loja no dia --- */
-async function loadEvCount(){
-  evCount={};
-  const {data}=await sb.from("evidencias").select("loja").eq("data",sel.date);
-  (data||[]).forEach(r=>{ const k=slug(r.loja); evCount[k]=(evCount[k]||0)+1; });
-}
-
-/* --- abrir escolha POS/Sistema --- */
 function openPick(loja){
-  pickLoja=loja; $("pickLoja").textContent=loja;
-  show("overlay"); show("pick");
+  const unit=lojaDe(loja);
+  if(!unit?.luc){alert("A loja não possui LUC confirmado.");return;}
+  pickLoja=loja;pickTipo=null;capturaPendente=null;
+  $("pickLoja").textContent=loja;
+  $("pickDetails").classList.remove("on");
+  $("pickValor").value="";
+  show("overlay");show("pick");
 }
-function closePick(){ hide("overlay"); hide("pick"); }
-[...document.querySelectorAll("#pick .pk")].forEach(b=>{
-  b.onclick=()=>{ pickTipo=b.dataset.tipo; closePick(); $("camIn").value=""; $("camIn").click(); };
-});
-
-/* --- captura -> comprime -> sobe --- */
-$("camIn").onchange=async e=>{
-  const f=e.target.files?.[0]; if(!f||!pickLoja||!pickTipo) return;
-  if(!navigator.onLine){ alert("Sem conexão. A foto precisa de internet para subir. Tente novamente ao recuperar o sinal."); return; }
-  const bar=$("upBar"); bar.classList.add("show"); $("upTxt").textContent="Comprimindo foto…";
-  try{
-    const blob=await compress(f);
-    $("upTxt").textContent=`Enviando ${pickTipo} — ${pickLoja}…`;
-    const [y,m,d]=sel.date.split("-");
-    const hhmm=nowHM().replace(":","");
-    const rand=Math.random().toString(36).slice(2,7);
-    const path=`${y}/${m}/${d}/${slug(pickLoja)}/${pickTipo}_${slug(current.nome)}_${hhmm}_${rand}.jpg`;
-    const up=await sb.storage.from(BUCKET).upload(path,blob,{contentType:"image/jpeg",upsert:false});
-    if(up.error) throw up.error;
-    const ins=await sb.from("evidencias").insert({
-      auditor_id:current.id, auditor_nome:current.nome, rota:sel.route, data:sel.date,
-      loja:pickLoja, luc:bnmStores.find(r=>r.nome===pickLoja)?.luc||null,
-      tipo:pickTipo, path, tamanho:blob.size });
-    if(ins.error) throw ins.error;
-    evCount[slug(pickLoja)]=(evCount[slug(pickLoja)]||0)+1;
-    $("upTxt").textContent="✓ Evidência registrada"; render();
-    setTimeout(()=>bar.classList.remove("show"),1100);
-  }catch(err){
-    $("upTxt").textContent="Falha ao enviar. Tente de novo.";
-    setTimeout(()=>bar.classList.remove("show"),2200);
+function closePick(){hide("overlay");hide("pick");}
+function preparePick(tipo){
+  if(!pickLoja)return;
+  pickTipo=tipo;
+  $("pickDetails").classList.add("on");
+  $("pickTerminalField").style.display=tipo==="POS"?"grid":"none";
+  $("newTerminalFields").style.display="none";
+  $("pickValor").value="";
+  if(tipo==="POS"){
+    const select=$("pickTerminal");select.replaceChildren();
+    const items=posTerminais.filter(t=>t.luc===lojaDe(pickLoja)?.luc);
+    const placeholder=document.createElement("option");
+    placeholder.value="";placeholder.textContent="Selecione a POS do fechamento";
+    select.appendChild(placeholder);
+    items.forEach(t=>{
+      const o=document.createElement("option");o.value=t.id;
+      o.textContent=t.apelido+(t.operadora?" · "+t.operadora:"")+(t.codigo?" · "+t.codigo:"")+(t.validado?"":" (a validar)");
+      select.appendChild(o);
+    });
+    const other=document.createElement("option");other.value="__nova__";
+    other.textContent="+ Cadastrar nova POS desta loja";
+    select.appendChild(other);
+    select.value="";
+    select.onchange=()=>{
+      $("newTerminalFields").style.display=select.value==="__nova__"?"block":"none";
+    };
   }
-  pickLoja=null; pickTipo=null;
+}
+[...document.querySelectorAll("#pick .pk")].forEach(b=>{
+  b.onclick=()=>preparePick(b.dataset.tipo);
+});
+$("pickContinue").onclick=()=>{
+  if(!pickLoja||!pickTipo)return;
+  const cents=parseValorCentavos($("pickValor").value);
+  if(cents===null){alert("Informe um valor válido, como 2940,57. Informe 0,00 quando o fechamento for comprovadamente zero.");return;}
+  const unit=lojaDe(pickLoja);
+  const draft={loja:pickLoja,luc:unit.luc,tipo:pickTipo,valor_centavos:cents,terminal_id:null,nova:null};
+  if(pickTipo==="POS"){
+    const selected=$("pickTerminal").value;
+    if(!selected){alert("Selecione qual POS apresentou fechamento.");return;}
+    if(selected==="__nova__"){
+      const apelido=$("pickTerminalName").value.trim().replace(/\s+/g," ");
+      if(apelido.length<2||apelido.length>80){alert("Dê um nome à POS para identificá-la nos próximos dias.");return;}
+      draft.nova={apelido,operadora:$("pickTerminalOperadora").value.trim()||null,codigo:$("pickTerminalCodigo").value.trim()||null};
+    }else draft.terminal_id=selected;
+  }
+  capturaPendente=draft;
+  closePick();$("camIn").value="";$("camIn").click();
+};
+$("camIn").onchange=async e=>{
+  const f=e.target.files?.[0], info=capturaPendente;
+  if(!f||!info)return;
+  capturaPendente=null;
+  if(!navigator.onLine){
+    alert("A foto e os valores só podem ser confirmados com internet. Nenhum valor foi contabilizado.");
+    return;
+  }
+  const bar=$("upBar");bar.classList.add("show");
+  $("upTxt").textContent="Preparando evidência e valor…";
+  let path=null;
+  try{
+    if(info.nova){
+      const created=await sb.from("pos_terminais")
+        .insert({luc:info.luc,apelido:info.nova.apelido,operadora:info.nova.operadora,
+          codigo:info.nova.codigo,criado_por:current.id,validado:false})
+        .select("id,luc,apelido,operadora,codigo,ativo,validado").single();
+      if(created.error)throw new Error("Não foi possível cadastrar a POS. Ela pode já existir: "+created.error.message);
+      posTerminais.push(created.data);info.terminal_id=created.data.id;
+    }
+    const chave=info.tipo==="POS"?"POS:"+info.terminal_id:"Sistema";
+    const old=await sb.from("apuracoes").select("id,auditor_id").eq("data",sel.date)
+      .eq("luc",info.luc).eq("chave",chave).maybeSingle();
+    if(old.error)throw old.error;
+    if(old.data && old.data.auditor_id!==current.id){
+      throw new Error("Esse fechamento já foi registrado por outro auditor. Peça ao coordenador para revisar.");
+    }
+    const blob=await compress(f);
+    const [y,m,d]=sel.date.split("-");
+    const item=info.tipo==="POS"
+      ? posTerminais.find(x=>x.id===info.terminal_id)?.apelido||"POS"
+      : "Sistema";
+    const pathItem=info.tipo==="POS"?"POS/"+slug(item):"Sistema";
+    path=y+"/"+m+"/"+d+"/"+slug(info.luc)+"/"+pathItem+"/"+
+      slug(current.nome)+"_"+Date.now()+"_"+crypto.randomUUID().slice(0,8)+".jpg";
+    $("upTxt").textContent="Enviando foto de "+item+"…";
+    const uploaded=await sb.storage.from(BUCKET).upload(path,blob,{contentType:"image/jpeg",upsert:false});
+    if(uploaded.error)throw uploaded.error;
+    const row={auditor_id:current.id,auditor_nome:current.nome,rota:sel.route,data:sel.date,
+      luc:info.luc,loja:info.loja,tipo:info.tipo,terminal_id:info.terminal_id,
+      chave,valor_centavos:info.valor_centavos,atualizado_em:new Date().toISOString()};
+    const saved=await sb.from("apuracoes").upsert(row,{onConflict:"data,luc,chave"}).select("id").single();
+    if(saved.error)throw new Error("Foto enviada, mas não foi possível gravar o valor: "+saved.error.message);
+    const evidence=await sb.from("evidencias").insert({
+      auditor_id:current.id,auditor_nome:current.nome,rota:sel.route,data:sel.date,
+      loja:info.loja,luc:info.luc,tipo:info.tipo,apuracao_id:saved.data.id,
+      path,tamanho:blob.size
+    });
+    if(evidence.error)throw new Error("Valor gravado, porém a vinculação da foto falhou: "+evidence.error.message);
+    await Promise.all([loadEvCount(),loadApuracoes()]);
+    if(state.enviadoAntes)state.finalizado=false;
+    saveLocal();render();
+    $("upTxt").textContent="✓ "+item+" — "+fmtCentavos(info.valor_centavos);
+    setTimeout(()=>bar.classList.remove("show"),1900);
+  }catch(err){
+    console.error("Falha na evidência",err);
+    $("upTxt").textContent="Falha: verifique este lançamento";
+    alert("Não foi possível concluir o registro. "+(err.message||"Tente novamente.")+
+      (path?" Verifique se ficou uma foto sem valor antes de repetir.":""));
+    setTimeout(()=>bar.classList.remove("show"),2400);
+  }
 };
 
 /* --- tela de evidências --- */

@@ -1793,6 +1793,24 @@ function renderAuditores(v){
         <span class="lw">${tot?cob+"%":"—"}</span></div>
       <div class="lrow"><span class="ln" style="font-weight:500;color:var(--gray)">Janela</span>
         <span class="lw">${s.ini?hm(s.ini)+" → "+hm(s.fim):"—"}</span></div>`;
+    const contact=document.createElement("div");contact.className="lrow";
+    const cl=document.createElement("span");cl.className="ln";cl.textContent="Celular";
+    const cv=document.createElement("span");cv.className="lw";
+    cv.textContent=u.telefone||"A preencher";contact.append(cl,cv);card.appendChild(contact);
+    const joining=document.createElement("div");joining.className="lrow";
+    const jl=document.createElement("span");jl.className="ln";jl.textContent="Início do contrato";
+    const jv=document.createElement("span");jv.className="lw";
+    jv.textContent=u.admissao?new Date(u.admissao+"T00:00").toLocaleDateString("pt-BR"):"A preencher";
+    joining.append(jl,jv);card.appendChild(joining);
+    const avatar=card.querySelector(".ahd .av");
+    if(u.avatar_path&&avatar){
+      avatarUrl(u.id,u.avatar_path).then(url=>{
+        if(!url)return;
+        const img=document.createElement("img");img.src=url;img.alt="Foto de perfil";
+        img.style.cssText="width:100%;height:100%;object-fit:cover;border-radius:9px";
+        avatar.replaceChildren(img);
+      }).catch(()=>{});
+    }
     v.appendChild(card);
   });
 }

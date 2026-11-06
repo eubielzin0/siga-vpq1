@@ -478,6 +478,22 @@ header.show{display:block}
   font-size:13px;font-weight:700;margin-top:14px;display:none;text-align:center}
 .pf-ok.show{display:block}
 svg{display:block}
+.profile-notice{background:#f6edd3;color:#664f0b;font-size:13px;line-height:1.5;border-radius:12px;padding:12px 14px;margin:10px 0 16px}
+.posmgr-tools{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.posmgr-tools input,.posmgr-tools select{background:#fff;border:1px solid #d9e4db;border-radius:11px;padding:11px;font:inherit;font-size:13px;min-width:0}
+.posmgr-tools input{flex:1 1 280px}
+.posmgr-tools select{flex:1 1 160px}
+.posmgr-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,315px),1fr));gap:11px;margin:12px 0 24px}
+.posmgr-item{background:#fff;border:1px solid #dfe8e0;border-radius:14px;padding:15px;min-width:0;box-shadow:var(--shadow)}
+.posmgr-item p{font-size:12px;line-height:1.45;color:#6b7e6f;margin:8px 0}
+.posmgr-item strong{font-size:14px;color:var(--g-dark);overflow-wrap:anywhere}
+.posmgr-badge{font-size:10px;font-weight:800;padding:3px 7px;background:#fbf2d8;color:#86600f;border-radius:99px;white-space:nowrap}
+.posmgr-badge.ok{background:#e5f3e8;color:#346c44}.posmgr-badge.off{background:#eef0ee;color:#79807a}
+.posmgr-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.posmgr-btns button{background:var(--g-mid);border-radius:8px;padding:9px 11px;color:white;font-size:12px;font-weight:750}
+.posmgr-btns button.secondary{background:#eef2ef;color:#536957}
+.posmgr-btns button:disabled{opacity:.45}
+.possearch-hint{color:#718373;font-size:11px;line-height:1.45;margin-top:4px}
 </style>
 </head>
 <body>
@@ -546,7 +562,8 @@ svg{display:block}
       </button>
     </div>
     <div class="field-label">Nome</div>
-    <div class="pf-ro"><b id="pfNome">—</b></div>
+    <input class="in" id="pfNome" type="text" maxlength="90" autocomplete="name" placeholder="Seu nome completo">
+    <div class="profile-notice" id="pfNotice" style="display:none">Complete seu telefone e a data de início do contrato para atualizar o cadastro da equipe.</div>
     <div class="field-label">Função</div>
     <div class="pf-ro" id="pfFuncao">—</div>
     <div class="field-label">Telefone</div>
@@ -554,7 +571,7 @@ svg{display:block}
     <div class="field-label">Data de nascimento</div>
     <input class="in" id="pfNasc" type="date">
     <div class="calc" id="pfIdade"></div>
-    <div class="field-label">Entrada na empresa</div>
+    <div class="field-label">Início do contrato</div>
     <input class="in" id="pfAdm" type="date">
     <div class="calc" id="pfCasa"></div>
     <div class="pf-ok" id="pfOk">✓ Perfil salvo</div>
@@ -618,6 +635,7 @@ svg{display:block}
       <button class="tab" data-v="evidencias">Evidências</button>
       <button class="tab" data-v="apuracao">Apuração</button>
       <button class="tab" data-v="cadastro">Lojas BNM</button>
+      <button class="tab" data-v="poscad">Terminais POS</button>
       <button class="tab" data-v="acessos">Acessos</button>
     </div>
   </div>
@@ -668,9 +686,11 @@ svg{display:block}
       </button>
     </div>
     <div class="capture-detail" id="pickDetails">
-      <label class="capture-field" id="pickTerminalField">QUAL POS TEVE FECHAMENTO?
+      <div class="capture-field" id="pickTerminalField">QUAL POS TEVE FECHAMENTO?
+        <input id="pickTerminalSearch" type="search" autocomplete="off" placeholder="Buscar adquirente ou código da POS">
         <select id="pickTerminal"></select>
-      </label>
+        <span class="possearch-hint" id="pickTerminalHint"></span>
+      </div>
       <div id="newTerminalFields" style="display:none">
         <label class="capture-field">NOME DA POS
           <input id="pickTerminalName" type="text" placeholder="Ex.: POS 01 — Caixa principal" maxlength="80">

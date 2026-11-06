@@ -602,6 +602,7 @@ svg{display:block}
   <div class="box">
     <div class="eyebrow">Início da coleta</div>
     <div class="who" id="whoBox" style="margin-top:12px"></div>
+    <div class="profile-notice" id="setupIncomplete" style="display:none">Seu cadastro pessoal está incompleto. Abra <b>Meu perfil</b> para preencher telefone e início do contrato.</div>
     <div class="gold-line" style="margin:18px 0 4px"></div>
     <div class="field-label">Rota</div>
     <div class="opt-grid" id="routeGrid">
@@ -910,7 +911,9 @@ $("logoutAdm").onclick=doLogout;
 
 function routeUser(){
   hide("login");
-  if(current.papel==="coordenador") openAdmin(); else openSetup();
+  if(current.papel==="coordenador") openAdmin();
+  else if(!current.telefone||!current.admissao)openPerfil("setup");
+  else openSetup();
 }
 
 /* ================= SETUP ================= */
@@ -918,6 +921,7 @@ function openSetup(){
   ["header","bottom","admin"].forEach(hide); $("main").style.display="none";
   $("whoBox").innerHTML=`<div class="av">${initials(current.nome)}</div>
     <div><div class="nm">${current.nome}</div><div class="rl">${current.funcao}</div></div>`;
+  $("setupIncomplete").style.display=current.papel==="auditor"&&(!current.telefone||!current.admissao)?"block":"none";
   const rg=$("routeGrid");
   [...rg.children].forEach(b=>{ b.classList.remove("on");
     b.onclick=()=>{ sel.route=b.dataset.route; [...rg.children].forEach(c=>c.classList.remove("on"));
@@ -1384,7 +1388,7 @@ async function loadAdmin(){
   const [c,t,e,a,ev,terms]=await Promise.all([
     sb.from("coletas").select("auditor_id,auditor_nome,rota,data,loja,status,motivo,marcado_em").eq("data",admDate),
     sb.from("turnos").select("*").eq("data",admDate),
-    sb.from("profiles").select("id,nome,funcao,papel").order("nome"),
+    sb.from("profiles").select("id,nome,funcao,papel,telefone,admissao,avatar_path").order("nome"),
     sb.from("apuracoes").select("id,auditor_id,auditor_nome,luc,loja,tipo,terminal_id,chave,valor_centavos").eq("data",admDate),
     sb.from("evidencias").select("apuracao_id").eq("data",admDate),
     sb.from("pos_terminais").select("id,luc,apelido,operadora,codigo,ativo,validado").eq("ativo",true)
@@ -2146,7 +2150,8 @@ async function openPerfil(from){
   ["setup","admin","header","bottom","evid"].forEach(hide); $("main").style.display="none";
   const {data}=await sb.from("profiles").select("*").eq("id",current.id).single();
   const p=data||current;
-  $("pfNome").textContent=p.nome||"—";
+  $("pfNome").value=p.nome||"";
+  $("pfNotice").style.display=current.papel==="auditor"&&(!p.telefone||!p.admissao)?"block":"none";
   $("pfFuncao").textContent=p.funcao||"—";
   $("pfTel").value=p.telefone||"";
   $("pfNasc").value=p.nascimento||"";
@@ -2169,15 +2174,27 @@ $("pfNasc").onchange=calcPerfil; $("pfAdm").onchange=calcPerfil;
 $("pfBack").onclick=()=>{ hide("perfil"); if(pfFrom==="admin") openAdmin(); else openSetup(); };
 $("perfilSetup").onclick=()=>openPerfil("setup");
 $("pfSave").onclick=async()=>{
-  const b=$("pfSave"); b.classList.add("loading"); b.disabled=true; $("pfSaveLbl").textContent="Salvando…";
-  const {error}=await sb.from("profiles").update({
-    telefone:$("pfTel").value.trim()||null,
+  const b=$("pfSave");
+  const nome=$("pfNome").value.trim().replace(/\s+/g," ");
+  const telefone=$("pfTel").value.replace(/\D/g,"");
+  if(nome.length<3||nome.length>90||/[<>&"]/.test(nome)){
+    alert("Informe seu nome completo, sem caracteres especiais.");return;
+  }
+  if(telefone&&![10,11].includes(telefone.length)){
+    alert("Informe um telefone com DDD, incluindo 10 ou 11 dígitos.");return;
+  }
+  b.classList.add("loading");b.disabled=true;$("pfSaveLbl").textContent="Salvando…";
+  const {data,error}=await sb.from("profiles").update({
+    nome,telefone:telefone||null,
     nascimento:$("pfNasc").value||null,
     admissao:$("pfAdm").value||null
-  }).eq("id",current.id);
-  b.classList.remove("loading"); b.disabled=false; $("pfSaveLbl").textContent="Salvar perfil";
-  if(error){ alert("Não foi possível salvar. Verifique a conexão."); return; }
-  $("pfOk").classList.add("show"); setTimeout(()=>$("pfOk").classList.remove("show"),2200);
+  }).eq("id",current.id).select("*").single();
+  b.classList.remove("loading");b.disabled=false;$("pfSaveLbl").textContent="Salvar perfil";
+  if(error){alert("Não foi possível salvar. Verifique os dados e a conexão.");return;}
+  current={...current,...data};
+  $("pfNotice").style.display=current.papel==="auditor"&&(!current.telefone||!current.admissao)?"block":"none";
+  $("pfOk").classList.add("show");
+  setTimeout(()=>$("pfOk").classList.remove("show"),2200);
 };
 /* foto de perfil */
 $("pfAvBtn").onclick=()=>{ $("avIn").value=""; $("avIn").click(); };
@@ -2191,6 +2208,7 @@ $("avIn").onchange=async e=>{
     const up=await sb.storage.from(AV_BUCKET).upload(path,blob,{contentType:"image/jpeg",upsert:true});
     if(up.error) throw up.error;
     await sb.from("profiles").update({avatar_path:path}).eq("id",current.id);
+    current.avatar_path=path;
     delete avCache[current.id];
     const {data}=await sb.storage.from(AV_BUCKET).createSignedUrl(path,3600);
     if(data?.signedUrl){ avCache[current.id]=data.signedUrl;

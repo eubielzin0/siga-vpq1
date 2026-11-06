@@ -548,6 +548,7 @@ svg{display:block}
     <input type="date" id="dateIn" class="in">
     <button class="pbtn" id="startBtn" disabled><span class="spin"></span><span id="startLbl">Iniciar coleta</span></button>
     <div class="hint" id="resumeHint"></div>
+    <button class="linkbtn" id="setupHomeBtn" style="display:none;margin-top:10px">Voltar ao painel administrativo</button>
     <button class="linkbtn" id="perfilSetup" style="margin-top:14px">Meu perfil</button>
     <button class="linkbtn" id="logoutSetup" style="margin-top:2px">Sair da conta</button>
   </div>
@@ -570,6 +571,12 @@ svg{display:block}
       <button class="tab" data-v="auditores">Auditores</button>
       <button class="tab" data-v="evidencias">Evidências</button>
       <button class="tab" data-v="cadastro">Lojas BNM</button>
+    </div>
+  </div>
+  <div class="wrap" style="padding-top:14px">
+    <div class="rt-btns">
+      <button class="rt-btn" id="admRouteBtn">Abrir / retomar minha rota<small>Registrar coletas e continuar turno</small></button>
+      <button class="rt-btn" id="admEvidBtn">Todas as evidências<small>Organizar e baixar ZIP por mês</small></button>
     </div>
   </div>
   <div class="wrap" id="admView"></div>
@@ -680,6 +687,7 @@ svg{display:block}
       Enviar resumo ao Administrativo
     </button>
     <button class="copy-btn" id="copyBtn">Copiar texto do resumo</button>
+    <button class="copy-btn" id="sheetHomeBtn">Voltar ao painel principal e retomar depois</button>
     <button class="danger" id="resetBtn">Zerar marcações deste turno</button>
   </div>
 </div>
@@ -821,7 +829,9 @@ function openSetup(){
       b.classList.add("on"); refreshStart(); }; });
   const d=$("dateIn"); if(!d.value) d.value=new Date().toISOString().slice(0,10);
   sel.date=d.value; d.onchange=()=>{ sel.date=d.value; refreshStart(); };
-  $("startBtn").onclick=()=>start(false);
+  $("startBtn").onclick=()=>start(current.papel==="coordenador");
+  $("setupHomeBtn").style.display=current.papel==="coordenador"?"block":"none";
+  $("setupHomeBtn").onclick=goHome;
   sel.route=null; refreshStart(); show("setup");
 }
 function refreshStart(){
@@ -851,15 +861,29 @@ async function start(fromAdmin){
     Object.keys(state.marks).forEach(k=>{ if(!cloud[k]) cloud[k]=state.marks[k]; });
     state.marks=cloud;
   }
+  if(navigator.onLine){
+    const {data:turnoAnterior,error:turnoErro}=await sb.from("turnos")
+      .select("finalizado_em")
+      .eq("auditor_id",current.id).eq("rota",sel.route).eq("data",sel.date).maybeSingle();
+    if(!turnoErro && turnoAnterior) state.enviadoAntes=true;
+  }
   saveLocal();
   await loadEvCount();
   b.classList.remove("loading"); $("startLbl").textContent="Iniciar coleta";
   hide("setup"); hide("admin"); show("header"); $("main").style.display="block"; show("bottom");
-  $("switchBtn").onclick = fromAdmin
-    ? ()=>{ hide("header"); $("main").style.display="none"; hide("bottom"); openAdmin(); }
-    : ()=>{ hide("header"); $("main").style.display="none"; hide("bottom"); openSetup(); };
-  $("switchLbl").textContent = fromAdmin ? "Voltar" : "Trocar rota";
+  $("switchBtn").onclick=goHome;
+  $("switchLbl").textContent="Painel";
   render(); updateHeader(); startClock(); setSync(); flush(); window.scrollTo(0,0);
+}
+
+function goHome(){
+  closeSheet(); closePick();
+  hide("header"); hide("bottom"); $("main").style.display="none";
+  clearTimeout(clockT);
+  if(current.papel==="coordenador"){
+    admView="consolidado"; openAdmin();
+  } else openSetup();
+  window.scrollTo(0,0);
 }
 
 /* ================= EVIDÊNCIAS (Fase 3) ================= */
@@ -1093,6 +1117,8 @@ async function openAdmin(){
   if(current.avatar_path){ avatarUrl(current.id,current.avatar_path).then(u=>{
     if(u) $("admAv").innerHTML=`<img src="${u}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:12px">`; }); }
   $("admNm").textContent=current.nome; $("admRl").textContent=current.funcao;
+  $("admRouteBtn").onclick=()=>openSetup();
+  $("admEvidBtn").onclick=()=>{ hide("admin"); openEvid("admin"); };
   const d=$("admDate"); d.value=admDate;
   d.onchange=()=>{ admDate=d.value; loadAdmin(); };
   [...document.querySelectorAll("#admTabs .tab")].forEach(b=>{
@@ -1110,7 +1136,7 @@ async function loadAdmin(){
   const [c,t,e]=await Promise.all([
     sb.from("coletas").select("auditor_id,auditor_nome,rota,data,loja,status,motivo,marcado_em").eq("data",admDate),
     sb.from("turnos").select("*").eq("data",admDate),
-    sb.from("profiles").select("id,nome,funcao,papel").eq("papel","auditor").order("nome")
+    sb.from("profiles").select("id,nome,funcao,papel").order("nome")
   ]);
   admData={coletas:c.data||[], turnos:t.data||[], equipe:e.data||[]};
   renderAdmin();
@@ -1365,12 +1391,14 @@ function cycle(loja){
     state.marks[id]={st:next,ts:nowHM(),reason};
     enqueue({t:"up",row:rowFor(loja,next,reason)});
   }
+  if(state.enviadoAntes) state.finalizado=false;
   saveLocal(); render(); updateHeader();
 }
 function setReason(loja,rz){
   const id=slug(loja); if(!state.marks[id]) return;
   state.marks[id].reason=rz;
   enqueue({t:"up",row:rowFor(loja,"impedimento",rz)});
+  if(state.enviadoAntes) state.finalizado=false;
   saveLocal(); render();
 }
 
@@ -1422,7 +1450,7 @@ function closeSheet(){ hide("overlay"); hide("sheet"); }
 function buildSheet(){
   const k=counts();
   $("finOk").classList.toggle("show", !!state.finalizado);
-  $("finLbl").textContent = state.finalizado ? "Reenviar turno atualizado" : "Finalizar e enviar turno";
+  $("finLbl").textContent = state.enviadoAntes ? "Reenviar turno atualizado" : "Finalizar e enviar turno";
   $("kTot").textContent=k.t; $("kCol").textContent=k.c; $("kImp").textContent=k.i; $("kPen").textContent=k.p;
   const dt=new Date(sel.date+"T00:00").toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long"});
   $("sheetDs").textContent=`Rota ${sel.route} • ${current.nome} • ${dt}`;
@@ -1457,11 +1485,20 @@ $("finBtn").onclick=async()=>{
     checklist_ok:CHECKLIST.filter((_,i)=>state.check[i]).length, checklist_total:CHECKLIST.length,
     finalizado_em:new Date().toISOString() };
   const {error}=await sb.from("turnos").upsert(row,{onConflict:"auditor_id,rota,data"});
-  if(error){ enqueue({t:"turno",row}); $("finLbl").textContent="Sem sinal — na fila de envio"; }
-  else { state.finalizado=true; saveLocal(); $("finOk").classList.add("show"); $("finLbl").textContent="Turno finalizado ✓"; }
+  if(error){
+    enqueue({t:"turno",row});
+    state.finalizado=false; saveLocal();
+    $("finLbl").textContent="Aguardando sincronização";
+    alert("O turno foi salvo na fila local, mas ainda não foi confirmado na nuvem. Sincronize antes de considerar o envio concluído.");
+    b.disabled=false; return;
+  }
+  state.enviadoAntes=true; state.finalizado=true;
+  saveLocal();
   b.disabled=false;
+  goHome();
 };
 $("summaryBtn").onclick=openSheet;
+$("sheetHomeBtn").onclick=goHome;
 $("overlay").onclick=()=>{ closeSheet(); closePick(); };
 $("waBtn").onclick=()=>{ if(!COORD_WPP){ alert("Contato do gestor ainda não configurado."); return; } window.open(`https://wa.me/${COORD_WPP}?text=${encodeURIComponent(buildReport())}`,"_blank"); };
 $("copyBtn").onclick=async()=>{ const t=buildReport();

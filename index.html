@@ -943,7 +943,14 @@ async function start(fromAdmin){
     if(!turnoErro && turnoAnterior) state.enviadoAntes=true;
   }
   saveLocal();
-  await loadEvCount();
+  apuracoesDia=[];posTerminais=[];apuracoesComFoto=new Set();financeLoaded=false;
+  try {
+    await Promise.all([loadEvCount(),loadTerminais(),loadApuracoes()]);
+    financeLoaded=true;
+  } catch(e) {
+    console.warn("A apuração financeira não pôde ser carregada:",e);
+    alert("A coleta pode ser consultada, mas a apuração financeira está indisponível. Confira a conexão antes de enviar fotos ou finalizar o turno.");
+  }
   b.classList.remove("loading"); $("startLbl").textContent="Iniciar coleta";
   hide("setup"); hide("admin"); show("header"); $("main").style.display="block"; show("bottom");
   $("switchBtn").onclick=goHome;
@@ -965,7 +972,7 @@ function goHome(){
 const MESES=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
 const BUCKET="evidencias";
 let evCount={};                 // contagem de fotos por loja no dia
-let apuracoesDia=[], posTerminais=[], apuracoesComFoto=new Set();
+let apuracoesDia=[], posTerminais=[], apuracoesComFoto=new Set(), financeLoaded=false;
 let pickLoja=null, pickTipo=null, capturaPendente=null;
 let evPath={mes:null,dia:null,loja:null}, evRows=[], evFiltro="todos", evFrom="coleta";
 
@@ -1124,6 +1131,7 @@ $("camIn").onchange=async e=>{
     });
     if(evidence.error)throw new Error("Valor gravado, porém a vinculação da foto falhou: "+evidence.error.message);
     await Promise.all([loadEvCount(),loadApuracoes()]);
+    financeLoaded=true;
     if(state.enviadoAntes)state.finalizado=false;
     saveLocal();render();
     $("upTxt").textContent="✓ "+item+" — "+fmtCentavos(info.valor_centavos);
@@ -1764,10 +1772,102 @@ function startClock(){ clearTimeout(clockT);
   tick(); }
 
 /* ================= RESUMO ================= */
-function openSheet(){ buildSheet(); show("overlay"); show("sheet"); }
+async function openSheet(){
+  buildSheet();show("overlay");show("sheet");
+  try{await refreshFinance();buildSheet();}
+  catch(err){financeLoaded=false;buildSheet();console.warn("Resumo indisponível",err);}
+}
 function closeSheet(){ hide("overlay"); hide("sheet"); }
+function registrosFinanceiros(rows,comFoto){
+  const recebidos=rows.filter(r=>comFoto.has(r.id));
+  const pendentes=rows.filter(r=>!comFoto.has(r.id));
+  const grupos=new Map();
+  for(const r of recebidos){
+    if(!grupos.has(r.luc))grupos.set(r.luc,{luc:r.luc,loja:r.loja,pos:[],sistema:[]});
+    grupos.get(r.luc)[r.tipo==="POS"?"pos":"sistema"].push(r);
+  }
+  return {groups:[...grupos.values()].sort((a,b)=>a.loja.localeCompare(b.loja,"pt-BR")),pendentes};
+}
+function resumoCentavos(rows,comFoto){
+  const {groups,pendentes}=registrosFinanceiros(rows,comFoto);
+  let pos=0,sistema=0,comparavel=0,lojasComparaveis=0;
+  for(const g of groups){
+    const p=g.pos.reduce((s,r)=>s+Number(r.valor_centavos),0);
+    const si=g.sistema.reduce((s,r)=>s+Number(r.valor_centavos),0);
+    pos+=p;sistema+=si;
+    if(g.pos.length&&g.sistema.length){comparavel+=(p-si);lojasComparaveis++;}
+  }
+  return {groups,pendentes,pos,sistema,comparavel,lojasComparaveis};
+}
+function financialView(container,rows,ids,dateLabel){
+  container.replaceChildren();
+  if(!financeLoaded && container.id==="financialSummary"){
+    const p=document.createElement("p");p.className="financial-note";
+    p.textContent="Apurações indisponíveis. Reconecte e reabra o resumo; os valores não podem ser confirmados agora.";
+    container.appendChild(p);return;
+  }
+  const summary=resumoCentavos(rows,ids);
+  const headline=document.createElement("div");headline.style.cssText="font-size:12px;color:#6e7d71;margin-bottom:11px";
+  headline.textContent="Dia "+dateLabel+" · valores digitados e vinculados a fotos";container.appendChild(headline);
+  const kpis=document.createElement("div");kpis.className="financial-kpis";
+  for(const [label,number] of [["Total das POS",summary.pos],["Total dos Sistemas",summary.sistema]]){
+    const box=document.createElement("div");box.className="financial-kpi";
+    const small=document.createElement("small");small.textContent=label;
+    const val=document.createElement("strong");val.textContent=fmtCentavos(number);
+    box.append(small,val);kpis.appendChild(box);
+  }
+  container.appendChild(kpis);
+  if(!summary.groups.length){
+    const p=document.createElement("p");p.className="financial-note";
+    p.textContent="Nenhum valor com fotografia associada foi registrado para esta data.";
+    container.appendChild(p);
+  }
+  for(const g of summary.groups){
+    const box=document.createElement("section");box.className="financial-store";
+    const h=document.createElement("div");h.className="financial-store-title";
+    h.textContent=g.loja+" · LUC "+g.luc;box.appendChild(h);
+    for(const r of g.pos){
+      const line=document.createElement("div");line.className="financial-row";
+      const title=document.createElement("span");
+      const terminal=posTerminais.find(t=>t.id===r.terminal_id);
+      title.textContent="POS — "+(terminal?.apelido||"Terminal identificado");
+      const val=document.createElement("b");val.textContent=fmtCentavos(r.valor_centavos);
+      line.append(title,val);box.appendChild(line);
+    }
+    const totalPos=g.pos.reduce((a,r)=>a+Number(r.valor_centavos),0);
+    const subtotal=document.createElement("div");subtotal.className="financial-subtotal";
+    const label=document.createElement("span");label.textContent="Subtotal POS";
+    const value=document.createElement("b");value.textContent=g.pos.length?fmtCentavos(totalPos):"Não informado";
+    subtotal.append(label,value);box.appendChild(subtotal);
+    for(const r of g.sistema){
+      const line=document.createElement("div");line.className="financial-row";
+      const lab=document.createElement("span");lab.textContent="Sistema";
+      const val=document.createElement("b");val.textContent=fmtCentavos(r.valor_centavos);
+      line.append(lab,val);box.appendChild(line);
+    }
+    const diff=document.createElement("div");diff.className="financial-subtotal";
+    const dl=document.createElement("span");dl.textContent="Diferença POS − Sistema";
+    const dv=document.createElement("b");
+    dv.textContent=g.pos.length&&g.sistema.length?
+      fmtCentavos(totalPos-g.sistema.reduce((a,r)=>a+Number(r.valor_centavos),0)):
+      "Não comparável";
+    diff.append(dl,dv);box.appendChild(diff);
+    container.appendChild(box);
+  }
+  const foot=document.createElement("p");foot.className="financial-note";
+  foot.textContent="Diferença comparável entre POS e Sistema em "+summary.lojasComparaveis+" operação(ões): "+
+    fmtCentavos(summary.comparavel)+". Valores de operações sem ambos os lados não entram nessa diferença. "+
+    (summary.pendentes.length?"Há "+summary.pendentes.length+" registro(s) de valor sem foto vinculada, excluídos dos totais. ":"")+
+    "Fotografias antigas sem valor digitado não entram na apuração.";
+  container.appendChild(foot);
+}
+async function refreshFinance(){
+  await Promise.all([loadApuracoes(),loadTerminais(),loadEvCount()]);
+  financeLoaded=true;
+}
 function buildSheet(){
   const k=counts();
+  financialView($("financialSummary"),apuracoesDia,apuracoesComFoto,new Date(sel.date+"T00:00").toLocaleDateString("pt-BR"));
   $("finOk").classList.toggle("show", !!state.finalizado);
   $("finLbl").textContent = state.enviadoAntes ? "Reenviar turno atualizado" : "Finalizar e enviar turno";
   $("kTot").textContent=k.t; $("kCol").textContent=k.c; $("kImp").textContent=k.i; $("kPen").textContent=k.p;
@@ -1792,12 +1892,28 @@ function buildReport(){
     else if(!mk||mk.st==="pendente") pen.push(`• ${s}`); }));
   if(imp.length) txt+=`\nIMPEDIMENTOS:\n${imp.join("\n")}\n`;
   if(pen.length) txt+=`\nPENDENTES:\n${pen.join("\n")}\n`;
+  if(financeLoaded){
+    const sum=resumoCentavos(apuracoesDia,apuracoesComFoto);
+    txt+=`\nVALORES APURADOS EM ${dt}:\nPOS: ${fmtCentavos(sum.pos)}\nSistemas: ${fmtCentavos(sum.sistema)}\n`;
+    sum.groups.forEach(g=>{
+      txt+=`\n${g.loja} (LUC ${g.luc}):\n`;
+      for(const r of g.pos){
+        const n=posTerminais.find(t=>t.id===r.terminal_id)?.apelido||"POS";
+        txt+=`• ${n}: ${fmtCentavos(r.valor_centavos)}\n`;
+      }
+      if(g.pos.length)txt+=`• Total POS: ${fmtCentavos(g.pos.reduce((a,r)=>a+Number(r.valor_centavos),0))}\n`;
+      for(const r of g.sistema)txt+=`• Sistema: ${fmtCentavos(r.valor_centavos)}\n`;
+    });
+    if(sum.pendentes.length)txt+=`\nATENÇÃO: ${sum.pendentes.length} valor(es) sem foto, fora dos totais.\n`;
+  }
   txt+=`\nChecklist final: ${CHECKLIST.filter((_,i)=>state.check[i]).length}/${CHECKLIST.length}`;
   return txt;
 }
 $("finBtn").onclick=async()=>{
   const k=counts(), b=$("finBtn");
   if(k.p>0 && !confirm(`Ainda há ${k.p} loja(s) pendente(s). Finalizar mesmo assim?`)) return;
+  try{await refreshFinance();}catch(_){alert("Não foi possível verificar a apuração financeira. Revise a conexão antes de finalizar.");return;}
+  if(resumoCentavos(apuracoesDia,apuracoesComFoto).pendentes.length){alert("Há valores sem foto associada. Regularize as evidências antes de finalizar.");return;}
   b.disabled=true; $("finLbl").textContent="Enviando…";
   const row={ auditor_id:current.id, auditor_nome:current.nome, auditor_funcao:current.funcao,
     rota:sel.route, data:sel.date, total:k.t, coletadas:k.c, impedimentos:k.i, pendentes:k.p,

@@ -1011,7 +1011,7 @@ function parseValorCentavos(texto){
 function lojaDe(nome){return bnmStores.find(x=>x.nome===nome);}
 async function loadTerminais(){
   const {data,error}=await sb.from("pos_terminais")
-    .select("id,luc,apelido,operadora,codigo,ativo,validado").eq("ativo",true).order("apelido");
+    .select("id,luc,apelido,operadora,codigo,ativo,validado,origem,observacao").eq("ativo",true).order("apelido");
   if(error)throw error;
   posTerminais=data||[];
 }
@@ -1050,6 +1050,7 @@ function openPick(loja){
   $("pickLoja").textContent=loja;
   $("pickDetails").classList.remove("on");
   $("pickValor").value="";
+  $("pickTerminalSearch").value="";
   show("overlay");show("pick");
 }
 function closePick(){hide("overlay");hide("pick");}
@@ -1061,23 +1062,39 @@ function preparePick(tipo){
   $("newTerminalFields").style.display="none";
   $("pickValor").value="";
   if(tipo==="POS"){
-    const select=$("pickTerminal");select.replaceChildren();
-    const items=posTerminais.filter(t=>t.luc===lojaDe(pickLoja)?.luc);
-    const placeholder=document.createElement("option");
-    placeholder.value="";placeholder.textContent="Selecione a POS do fechamento";
-    select.appendChild(placeholder);
-    items.forEach(t=>{
-      const o=document.createElement("option");o.value=t.id;
-      o.textContent=t.apelido+(t.operadora?" · "+t.operadora:"")+(t.codigo?" · "+t.codigo:"")+(t.validado?"":" (a validar)");
-      select.appendChild(o);
-    });
-    const other=document.createElement("option");other.value="__nova__";
-    other.textContent="+ Cadastrar nova POS desta loja";
-    select.appendChild(other);
-    select.value="";
+    const select=$("pickTerminal"),search=$("pickTerminalSearch"),hint=$("pickTerminalHint");
+    search.value="";hint.textContent="";
+    const items=posTerminais.filter(t=>t.luc===lojaDe(pickLoja)?.luc)
+      .sort((a,b)=>(a.apelido||"").localeCompare(b.apelido||"","pt-BR"));
+    const draw=()=>{
+      const needle=search.value.trim().toLocaleLowerCase("pt-BR");
+      const filtered=items.filter(t=>
+        [t.apelido,t.operadora,t.codigo].some(v=>String(v||"").toLocaleLowerCase("pt-BR").includes(needle))
+      );
+      select.replaceChildren();
+      const placeholder=document.createElement("option");
+      placeholder.value="";placeholder.textContent=filtered.length+" POS encontrada(s) — selecione uma";
+      select.appendChild(placeholder);
+      filtered.forEach(t=>{
+        const option=document.createElement("option");option.value=t.id;
+        option.textContent=t.apelido+(t.validado?"":" · A validar");
+        select.appendChild(option);
+      });
+      const other=document.createElement("option");other.value="__nova__";
+      other.textContent="+ Cadastrar nova POS desta loja";
+      select.appendChild(other);select.value="";
+      $("newTerminalFields").style.display="none";
+      hint.textContent=filtered.length+" de "+items.length+" POS cadastradas nesta operação.";
+    };
+    search.oninput=draw;
     select.onchange=()=>{
       $("newTerminalFields").style.display=select.value==="__nova__"?"block":"none";
+      const t=items.find(x=>x.id===select.value);
+      hint.textContent=t?((t.validado?"Validada. ":"Aguardando validação física. ")+(t.observacao||"")):
+        select.value==="__nova__"?"Este terminal ficará pendente de validação pelo coordenador.":
+        items.length+" POS no cadastro.";
     };
+    draw();
   }
 }
 [...document.querySelectorAll("#pick .pk")].forEach(b=>{
@@ -1408,8 +1425,98 @@ function renderAdmin(){
   if(admView==="cadastro")     return renderCadastroLojas(v);
   if(admView==="acessos")      return renderAcessos(v);
   if(admView==="apuracao")      return renderApuracaoAdmin(v);
+  if(admView==="poscad")       return renderTerminaisAdmin(v);
 }
 
+
+/* Terminais provisórios da planilha: o coordenador valida após conferência operacional. */
+async function renderTerminaisAdmin(v){
+  v.replaceChildren();
+  if(current.papel!=="coordenador")return;
+  const shell=document.createElement("section");shell.className="catalog-shell";
+  const h=document.createElement("h2");h.style.cssText="font-size:20px;color:var(--g-dark);margin:0 0 7px";
+  h.textContent="Terminais POS — Bossa Nova Mall";
+  const p=document.createElement("p");p.style.cssText="font-size:13px;color:#647768;line-height:1.5;margin:0 0 14px";
+  p.textContent="Terminais importados da planilha ficam pendentes de conferência física. Valide apenas após verificar a operação, adquirente e código; inative códigos históricos sem apagar as evidências anteriores.";
+  shell.append(h,p);v.appendChild(shell);
+  const tools=document.createElement("div");tools.className="posmgr-tools";
+  const search=document.createElement("input");search.type="search";search.placeholder="Pesquisar loja, LUC, adquirente ou código";
+  const filter=document.createElement("select");
+  [["revisar","A validar"],["todos","Todos"],["validados","Validados"],["inativos","Inativos"],["divergencias","Com alertas"]].forEach(([value,label])=>{
+    const opt=document.createElement("option");opt.value=value;opt.textContent=label;filter.appendChild(opt);
+  });
+  const store=document.createElement("select");
+  const global=document.createElement("option");global.value="todos";global.textContent="Todas as lojas";
+  store.appendChild(global);tools.append(search,filter,store);
+  const stats=document.createElement("div");stats.style.cssText="font-size:12px;color:#607566;font-weight:700;margin:12px 0";
+  const grid=document.createElement("div");grid.className="posmgr-list";
+  shell.append(tools,stats,grid);
+  const {data,error}=await sb.from("pos_terminais")
+    .select("id,luc,apelido,operadora,codigo,ativo,validado,origem,observacao").order("luc").order("apelido");
+  if(error){
+    stats.textContent="Falha ao carregar terminais: "+error.message;return;
+  }
+  const all=data||[];
+  const locs=[...new Set(all.map(t=>t.luc))];
+  locs.forEach(luc=>{
+    const opt=document.createElement("option");opt.value=luc;
+    opt.textContent=(bnmStores.find(l=>l.luc===luc)?.nome||luc)+" · "+luc;
+    store.appendChild(opt);
+  });
+  const draw=()=>{
+    const needle=search.value.trim().toLocaleLowerCase("pt-BR");
+    const rows=all.filter(t=>{
+      const l=bnmStores.find(x=>x.luc===t.luc);
+      if(store.value!=="todos"&&store.value!==t.luc)return false;
+      if(filter.value==="revisar"&&(t.validado||!t.ativo))return false;
+      if(filter.value==="validados"&&(!t.validado||!t.ativo))return false;
+      if(filter.value==="inativos"&&t.ativo)return false;
+      if(filter.value==="divergencias"&&!(t.observacao||"").match(/outra operação|POS=NÃO|numérico|Código curto/i))return false;
+      return !needle||[t.apelido,t.operadora,t.codigo,t.luc,l?.nome].some(s=>String(s||"").toLocaleLowerCase("pt-BR").includes(needle));
+    });
+    stats.textContent=all.length+" cadastradas · "+all.filter(t=>t.ativo&&!t.validado).length+
+      " ativas a validar · "+all.filter(t=>t.validado).length+" validadas · "+rows.length+" exibidas";
+    grid.replaceChildren();
+    for(const t of rows){
+      const card=document.createElement("article");card.className="posmgr-item";
+      const head=document.createElement("div");head.style.cssText="display:flex;gap:9px;justify-content:space-between;align-items:flex-start";
+      const title=document.createElement("strong");title.textContent=t.apelido;
+      const status=document.createElement("span");
+      status.className="posmgr-badge"+(!t.ativo?" off":t.validado?" ok":"");
+      status.textContent=!t.ativo?"INATIVA":t.validado?"VALIDADA":"A VALIDAR";
+      head.append(title,status);
+      const ident=document.createElement("p");
+      const loja=bnmStores.find(x=>x.luc===t.luc);
+      ident.textContent=(loja?.nome||"Operação não identificada")+" · LUC "+t.luc+
+        (loja?.instrumento?" · Instr. "+loja.instrumento:"");
+      const warning=document.createElement("p");
+      warning.textContent=t.observacao||"Cadastro manual; conferir dados";
+      const buttons=document.createElement("div");buttons.className="posmgr-btns";
+      const valid=document.createElement("button");valid.textContent=t.validado?"Reabrir revisão":"Validar POS";
+      valid.disabled=!t.ativo;
+      valid.onclick=async()=>{
+        if(!t.validado&&!confirm("Confirma que conferiu fisicamente a POS "+t.apelido+" da loja "+(loja?.nome||t.luc)+"?"))return;
+        valid.disabled=true;
+        const {error}=await sb.from("pos_terminais").update({validado:!t.validado}).eq("id",t.id);
+        if(error){alert("Não foi possível atualizar: "+error.message);valid.disabled=false;return;}
+        t.validado=!t.validado;
+        await loadTerminais().catch(()=>{});
+        draw();
+      };
+      const activate=document.createElement("button");activate.className="secondary";
+      activate.textContent=t.ativo?"Inativar":"Reativar";
+      activate.onclick=async()=>{
+        if(!confirm((t.ativo?"Inativar":"Reativar")+" este terminal?"))return;
+        activate.disabled=true;
+        const {error}=await sb.from("pos_terminais").update({ativo:!t.ativo,validado:false}).eq("id",t.id);
+        if(error){alert("Falha ao atualizar: "+error.message);activate.disabled=false;return;}
+        t.ativo=!t.ativo;t.validado=false;await loadTerminais().catch(()=>{});draw();
+      };
+      buttons.append(valid,activate);card.append(head,ident,warning,buttons);grid.appendChild(card);
+    }
+  };
+  search.oninput=draw;filter.onchange=draw;store.onchange=draw;draw();
+}
 
 function renderApuracaoAdmin(v){
   v.replaceChildren();

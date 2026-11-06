@@ -667,6 +667,27 @@ svg{display:block}
         <b>Sistema</b><small>Tela do sistema da loja</small>
       </button>
     </div>
+    <div class="capture-detail" id="pickDetails">
+      <label class="capture-field" id="pickTerminalField">QUAL POS TEVE FECHAMENTO?
+        <select id="pickTerminal"></select>
+      </label>
+      <div id="newTerminalFields" style="display:none">
+        <label class="capture-field">NOME DA POS
+          <input id="pickTerminalName" type="text" placeholder="Ex.: POS 01 — Caixa principal" maxlength="80">
+        </label>
+        <label class="capture-field">ADQUIRENTE (OPCIONAL)
+          <input id="pickTerminalOperadora" placeholder="Ex.: Getnet, Stone, Cielo" maxlength="60">
+        </label>
+        <label class="capture-field">CÓDIGO DO TERMINAL (OPCIONAL)
+          <input id="pickTerminalCodigo" placeholder="Código informado no relatório" maxlength="100">
+        </label>
+      </div>
+      <label class="capture-field">VALOR APURADO NA EVIDÊNCIA (R$)
+        <input id="pickValor" type="text" inputmode="decimal" placeholder="Ex.: 2.940,57" maxlength="20">
+      </label>
+      <div class="help">Digite o valor conferido no fechamento. Cada POS será somada uma vez por loja e dia. A foto comprova o valor, mas não faz leitura automática.</div>
+      <button class="capture-save" id="pickContinue">Continuar para a foto</button>
+    </div>
   </div>
 </div>
 

@@ -1295,7 +1295,9 @@ async function downloadMonth(mes,button){
       const {data,error}=await sb.storage.from(BUCKET).download(r.path);
       if(error||!data)throw new Error("Não foi possível baixar "+r.loja+" ("+r.tipo+"). Nenhum ZIP incompleto foi salvo.");
       const filename=r.path.split("/").pop()||("foto_"+(i+1)+".jpg");
-      const folder=mesLabel(mes)+"/Dia "+r.data.slice(8,10)+"/"+dirPart(r.loja)+"/"+(r.tipo==="POS"?"POS":"Sistema")+"/";
+      const parts=r.path.split("/");
+      const posName=r.tipo==="POS" && parts.length>=7?dirPart(parts[5])+"/":"";
+      const folder=mesLabel(mes)+"/Dia "+r.data.slice(8,10)+"/"+dirPart(r.loja)+"/"+(r.tipo==="POS"?"POS/":"Sistema/")+posName;
       zip.file(folder+dirPart(filename),data);count++;
     }
     if(count!==selected.length)throw new Error("O número de arquivos não confere.");
@@ -1312,7 +1314,7 @@ $("evBtn").onclick=()=>openEvid("coleta");
 
 /* ================= ADMIN (painel ao vivo) ================= */
 let admView="consolidado", admDate=todayLocal();
-let admData={coletas:[],turnos:[],equipe:[]}, admChan=null, admSegRota="todas";
+let admData={coletas:[],turnos:[],equipe:[],apuracoes:[],evidencias:[]}, admChan=null, admSegRota="todas";
 const routeTotal=r=>ROUTES[r]?ROUTES[r].reduce((a,b)=>a+b.s.length,0):0;
 const hm=iso=>new Date(iso).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
 
@@ -1340,12 +1342,17 @@ async function openAdmin(){
 
 async function loadAdmin(){
   $("admView").innerHTML=`<div class="empty">Carregando…</div>`;
-  const [c,t,e]=await Promise.all([
+  const [c,t,e,a,ev,terms]=await Promise.all([
     sb.from("coletas").select("auditor_id,auditor_nome,rota,data,loja,status,motivo,marcado_em").eq("data",admDate),
     sb.from("turnos").select("*").eq("data",admDate),
-    sb.from("profiles").select("id,nome,funcao,papel").order("nome")
+    sb.from("profiles").select("id,nome,funcao,papel").order("nome"),
+    sb.from("apuracoes").select("id,auditor_id,auditor_nome,luc,loja,tipo,terminal_id,chave,valor_centavos").eq("data",admDate),
+    sb.from("evidencias").select("apuracao_id").eq("data",admDate),
+    sb.from("pos_terminais").select("id,luc,apelido,operadora,codigo,ativo,validado").eq("ativo",true)
   ]);
-  admData={coletas:c.data||[], turnos:t.data||[], equipe:e.data||[]};
+  admData={coletas:c.data||[],turnos:t.data||[],equipe:e.data||[],apuracoes:a.data||[],
+    evidencias:ev.data||[],financeError:a.error||ev.error||terms.error};
+  if(!terms.error)posTerminais=terms.data||[];
   renderAdmin();
 }
 
@@ -1378,8 +1385,29 @@ function renderAdmin(){
   if(admView==="evidencias")  return renderEvidencias(v);
   if(admView==="cadastro")     return renderCadastroLojas(v);
   if(admView==="acessos")      return renderAcessos(v);
+  if(admView==="apuracao")      return renderApuracaoAdmin(v);
 }
 
+
+function renderApuracaoAdmin(v){
+  v.replaceChildren();
+  const title=document.createElement("div");title.className="section-tt";
+  title.textContent="Apuração do dia — POS e Sistema";
+  v.appendChild(title);
+  const help=document.createElement("p");help.style.cssText="font-size:12px;color:#6b7b6e;line-height:1.5;margin:2px 0 12px";
+  help.textContent="Use a data na parte superior do painel para consultar cada dia. Veja os valores registrados por POS, os totais por operação e as diferenças com o Sistema.";
+  v.appendChild(help);
+  const card=document.createElement("div");card.className="financial-summary";
+  if(admData.financeError){
+    const note=document.createElement("div");note.className="financial-note";
+    note.textContent="Falha ao carregar apurações. Atualize a data ou tente novamente.";
+    card.appendChild(note);
+  }else{
+    const have=new Set(admData.evidencias.map(x=>x.apuracao_id).filter(Boolean));
+    financialView(card,admData.apuracoes,have,new Date(admDate+"T00:00").toLocaleDateString("pt-BR"));
+  }
+  v.appendChild(card);
+}
 
 /* Criação oficial de usuários: função Edge restrita ao papel coordenador.
    Nunca incluir service_role_key ou senha no repositório ou no localStorage. */

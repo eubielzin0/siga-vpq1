@@ -260,6 +260,32 @@ header.show{display:block}
 .akpi small{font-size:11px;color:var(--gray);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
 .akpi.c b{color:var(--g-52)} .akpi.i b{color:var(--red)} .akpi.g b{color:var(--gold)}
 .acard{background:#fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden;margin:12px 0}
+.adm-content-wrap{max-width:1120px}
+.catalog-shell{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;margin:14px 0;box-shadow:var(--shadow)}
+.catalog-title{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.catalog-title h2{font-size:20px;line-height:1.25;color:var(--g-dark);margin:0 0 7px;font-weight:800}
+.catalog-title p{color:#6b7770;font-size:13px;line-height:1.5;margin:0 0 14px;max-width:760px}
+.catalog-count{color:var(--g-52);background:var(--g-eef);border-radius:999px;font-size:12px;font-weight:800;padding:8px 12px;white-space:nowrap}
+.catalog-controls{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 17px}
+.catalog-search,.catalog-filter{font:inherit;font-size:14px;background:#f8faf8;color:var(--g-dark);border:1px solid #dce5de;border-radius:11px;padding:11px 13px;min-height:44px}
+.catalog-search{flex:1 1 290px;min-width:0}.catalog-filter{flex:0 1 160px}
+.catalog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,315px),1fr));gap:13px}
+.catalog-store{min-width:0;border:1px solid #e0e8e2;border-radius:15px;padding:15px;background:#fff;box-shadow:0 2px 6px rgba(41,59,47,.025);border-left:3px solid var(--g-52)}
+.catalog-store.off{border-left-color:#b3bcb5;background:#fafbfa}
+.catalog-store-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.catalog-store-name{font-size:15px;font-weight:800;color:var(--g-dark);line-height:1.35;overflow-wrap:anywhere}
+.catalog-store-code{font-size:10px;letter-spacing:.04em;color:#8c9b8f;font-weight:700;margin-top:4px}
+.catalog-status{flex:0 0 auto;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800;background:#e8f2eb;color:#3e6950}
+.catalog-status.off{background:#eef0ee;color:#757e76}
+.catalog-meta{display:grid;grid-template-columns:1fr 1fr;gap:9px;border-top:1px solid #ecf0ec;border-bottom:1px solid #ecf0ec;padding:12px 0;margin:13px 0}
+.catalog-meta small{display:block;font-size:10px;font-weight:700;color:#88958b;text-transform:uppercase;letter-spacing:.05em}
+.catalog-meta strong{display:block;font-size:12.5px;color:#384a3d;font-weight:750;overflow-wrap:anywhere;margin-top:3px}
+.catalog-flags{display:flex;gap:6px;flex-wrap:wrap}
+.catalog-flag{font-size:10px;font-weight:750;padding:5px 8px;border-radius:7px;background:#eff2ef;color:#98a29a}
+.catalog-flag.yes{color:#40694b;background:#eaf3ec}
+.catalog-flag.focus{background:#dcebe0;color:#2f633c}
+.catalog-empty{padding:32px;text-align:center;color:#7a867d;font-size:14px}
+@media(max-width:580px){.catalog-shell{padding:14px}.catalog-filter{flex:1 1 130px}.catalog-grid{grid-template-columns:1fr}}
 .ahd{display:flex;align-items:center;gap:11px;padding:13px 15px;background:var(--g-eef)}
 .ahd .an{flex:1;font-weight:800;font-size:14.5px;color:var(--g-dark)}
 .ahd .ap{font-size:11.5px;font-weight:700;color:var(--g-52);background:#fff;padding:3px 9px;border-radius:20px}
@@ -579,7 +605,7 @@ svg{display:block}
       <button class="rt-btn" id="admEvidBtn">Todas as evidências<small>Organizar e baixar ZIP por mês</small></button>
     </div>
   </div>
-  <div class="wrap" id="admView"></div>
+  <div class="wrap adm-content-wrap" id="admView"></div>
   <div class="wrap"><button class="danger" id="logoutAdm" style="margin:22px 0 30px">Sair da conta</button></div>
 </div>
 
@@ -1012,6 +1038,14 @@ function renderEvid(){
         <div class="nb"><div class="nt">${mesLabel(k)}</div>
           <div class="ns">${new Set(g[k].map(r=>r.data)).size} dia(s)</div></div>
         <span class="nc">${g[k].length} fotos</span>`;
+      if(isCoord){
+        const btn=document.createElement("button");
+        btn.className="dl";btn.style.cssText="margin:0 0 0 8px;white-space:nowrap;flex-shrink:0";
+        btn.textContent="Baixar ZIP";
+        btn.setAttribute("aria-label","Baixar todas as evidências de "+mesLabel(k));
+        btn.onclick=e=>{e.stopPropagation();downloadMonth(k,btn);};
+        n.appendChild(btn);
+      }
       n.onclick=()=>{ evPath.mes=k; renderEvid(); }; v.appendChild(n);
     });
     return;
@@ -1081,30 +1115,36 @@ function renderEvid(){
   });
 }
 
-/* --- baixar a pasta do mês (zip mês/dia/loja) --- */
-$("evDl").onclick=async()=>{
-  const b=$("evDl"); if(!evPath.mes) return;
-  const list=evFiltered().filter(r=>r.data.slice(0,7)===evPath.mes);
-  if(!list.length) return;
-  b.disabled=true;
+/* Baixa um mês inteiro no computador sem precisar abrir cada dia.
+   ZIP: Mês / Dia / Loja / POS ou Sistema / foto.jpg */
+async function downloadMonth(mes,button){
+  if(current.papel!=="coordenador"||!mes||button.disabled)return;
+  const selected=evFiltered().filter(r=>r.data.slice(0,7)===mes);
+  if(!selected.length){alert("Este mês não possui evidências disponíveis.");return;}
+  const original=button.innerHTML;button.disabled=true;
   try{
     const {default:JSZip}=await import("https://esm.sh/jszip@3.10.1");
     const zip=new JSZip();
-    for(let i=0;i<list.length;i++){
-      const r=list[i]; b.textContent=`${i+1}/${list.length}`;
-      const {data}=await sb.storage.from(BUCKET).download(r.path);
-      if(!data) continue;
-      const file=r.path.split("/").pop();
-      zip.file(`${mesLabel(evPath.mes)}/dia ${r.data.slice(8,10)}/${r.loja}/${file}`, data);
+    const dirPart=s=>String(s||"Não informado").replace(/[<>:"/\\|?*\x00-\x1f]/g,"-").replace(/[. ]+$/g,"").slice(0,100)||"Não informado";
+    let count=0;
+    for(let i=0;i<selected.length;i++){
+      const r=selected[i];button.textContent=(i+1)+"/"+selected.length;
+      const {data,error}=await sb.storage.from(BUCKET).download(r.path);
+      if(error||!data)throw new Error("Não foi possível baixar "+r.loja+" ("+r.tipo+"). Nenhum ZIP incompleto foi salvo.");
+      const filename=r.path.split("/").pop()||("foto_"+(i+1)+".jpg");
+      const folder=mesLabel(mes)+"/Dia "+r.data.slice(8,10)+"/"+dirPart(r.loja)+"/"+(r.tipo==="POS"?"POS":"Sistema")+"/";
+      zip.file(folder+dirPart(filename),data);count++;
     }
+    if(count!==selected.length)throw new Error("O número de arquivos não confere.");
     const out=await zip.generateAsync({type:"blob"});
-    const a=document.createElement("a");
-    a.href=URL.createObjectURL(out);
-    a.download=`SIGA-ALQIA-BNM_evidencias_${evPath.mes}${evFiltro!=="todos"?"_"+slug(evFiltro):""}.zip`;
-    a.click(); URL.revokeObjectURL(a.href);
-  }catch(e){ alert("Não foi possível gerar o download. Tente novamente."); }
-  b.disabled=false; b.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Baixar`;
-};
+    const a=document.createElement("a");const url=URL.createObjectURL(out);
+    a.href=url;a.download="SIGA_ALQIA_BNM_"+mes+(evFiltro!=="todos"?"_"+slug(evFiltro):"")+".zip";
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+  }catch(e){alert("Falha no download: "+(e.message||"tente novamente."));}
+  finally{button.disabled=false;button.innerHTML=original;}
+}
+$("evDl").onclick=()=>downloadMonth(evPath.mes,$("evDl"));
 $("evBtn").onclick=()=>openEvid("coleta");
 
 /* ================= ADMIN (painel ao vivo) ================= */
@@ -1179,40 +1219,78 @@ function renderAdmin(){
 
 /* Cadastro de classificação disponibilizado apenas ao perfil coordenador */
 function renderCadastroLojas(v){
-  v.innerHTML="";
-  const wrap=document.createElement("div"); wrap.className="acard";
-  const count=bnmStores.filter(r=>r.ativa).length;
-  const h=document.createElement("div"); h.className="section-tt";
-  h.textContent=`Cadastro BNM — ${bnmStores.length} registros (${count} ativos)`;
-  wrap.appendChild(h);
-  const note=document.createElement("p"); note.style.cssText="font-size:12px;opacity:.8;margin:10px 0";
-  note.textContent="LUC e instrumento conferidos. Pavimentos e ordem da rota física ainda precisam ser validados. Na rota entram apenas lojas ativas com Coleta = SIM.";
-  wrap.appendChild(note);
-  const q=document.createElement("input"); q.className="in"; q.placeholder="Pesquisar loja, LUC ou instrumento";
-  wrap.appendChild(q);
-  const list=document.createElement("div"); wrap.appendChild(list);
-  function draw(){
-    list.replaceChildren();
-    const needle=q.value.trim().toLocaleLowerCase("pt-BR");
-    const dados=bnmStores.filter(r=>!needle ||
-      r.nome.toLocaleLowerCase("pt-BR").includes(needle) ||
-      (r.codigo_cadastro||"").toLocaleLowerCase("pt-BR").includes(needle) ||
-      (r.luc||"").toLocaleLowerCase("pt-BR").includes(needle) ||
-      (r.instrumento||"").toLocaleLowerCase("pt-BR").includes(needle));
-    dados.forEach(r=>{
-      const item=document.createElement("div");item.style.cssText="padding:12px 0;border-bottom:1px solid rgba(255,255,255,.12)";
-      const title=document.createElement("div");title.style.cssText="font-weight:700;font-size:14px";
-      title.textContent=`${r.nome} · ${r.codigo_cadastro} · ${r.ativa?"Ativo":"Inativo"}`; item.appendChild(title);
-      const secondary=document.createElement("div");secondary.style.cssText="font-size:11px;opacity:.7;margin:4px 0";
-      secondary.textContent=`LUC ${r.luc||"—"} · Instrumento ${r.instrumento||"—"} · Pavimento ${r.pavimento||"a definir"}`;
-      item.appendChild(secondary);
-      const flags=document.createElement("div");flags.style.cssText="font-size:11px;line-height:1.65;opacity:.9";
-      flags.textContent=[["NAPP",r.napp],["INFORMA",r.informa],["COLETA",r.coleta],["POS",r.pos],["PRESENCIAL",r.presencial]]
-        .map(([n,val])=>`${n}: ${val?"SIM":"NÃO"}`).join(" · ");
-      item.appendChild(flags);list.appendChild(item);
+  v.replaceChildren();
+  const shell=document.createElement("section");shell.className="catalog-shell";
+  const head=document.createElement("div");head.className="catalog-title";
+  const left=document.createElement("div");
+  const title=document.createElement("h2");title.textContent="Cadastro de lojas — Bossa Nova Mall";
+  const desc=document.createElement("p");
+  desc.textContent="Consulte os estabelecimentos, seus LUCs e instrumentos e as classificações operacionais. A rota inclui apenas lojas ativas com COLETA = SIM.";
+  left.append(title,desc);
+  const badge=document.createElement("span");badge.className="catalog-count";
+  badge.textContent=bnmStores.length+" registros · "+bnmStores.filter(r=>r.ativa).length+" ativos";
+  head.append(left,badge);shell.appendChild(head);
+  const controls=document.createElement("div");controls.className="catalog-controls";
+  const search=document.createElement("input");search.type="search";search.className="catalog-search";
+  search.placeholder="Buscar nome, LUC ou instrumento";
+  search.setAttribute("aria-label","Pesquisar lojas");
+  const activity=document.createElement("select");activity.className="catalog-filter";
+  [["todos","Todas as lojas"],["ativas","Somente ativas"],["inativas","Somente inativas"]].forEach(([value,label])=>{
+    const opt=document.createElement("option");opt.value=value;opt.textContent=label;activity.appendChild(opt);
+  });
+  const collection=document.createElement("select");collection.className="catalog-filter";
+  [["todos","Toda classificação"],["coleta","Com coleta"],["semcoleta","Sem coleta"],["presencial","Presenciais"],["napp","Integradas NAPP"]].forEach(([value,label])=>{
+    const opt=document.createElement("option");opt.value=value;opt.textContent=label;collection.appendChild(opt);
+  });
+  controls.append(search,activity,collection);shell.appendChild(controls);
+  const resultInfo=document.createElement("div");
+  resultInfo.style.cssText="font-size:12px;color:#6e7d71;font-weight:600;margin:0 0 12px";
+  shell.appendChild(resultInfo);
+  const grid=document.createElement("div");grid.className="catalog-grid";shell.appendChild(grid);
+  function renderItems(){
+    const needle=search.value.trim().toLocaleLowerCase("pt-BR");
+    const filtered=bnmStores.filter(r=>{
+      if(needle&&![r.nome,r.luc,r.instrumento,r.codigo_cadastro].some(s=>String(s||"").toLocaleLowerCase("pt-BR").includes(needle)))return false;
+      if(activity.value==="ativas"&&!r.ativa)return false;
+      if(activity.value==="inativas"&&r.ativa)return false;
+      if(collection.value==="coleta"&&!(r.ativa&&r.coleta))return false;
+      if(collection.value==="semcoleta"&&r.coleta)return false;
+      if(collection.value==="presencial"&&!r.presencial)return false;
+      if(collection.value==="napp"&&!r.napp)return false;
+      return true;
     });
+    resultInfo.textContent=filtered.length+" loja(s) exibida(s)";
+    grid.replaceChildren();
+    if(!filtered.length){const empty=document.createElement("div");empty.className="catalog-empty";empty.textContent="Nenhuma loja encontrada para os filtros aplicados.";grid.appendChild(empty);return;}
+    const fragment=document.createDocumentFragment();
+    filtered.forEach(r=>{
+      const card=document.createElement("article");card.className="catalog-store"+(r.ativa?"":" off");
+      const header=document.createElement("div");header.className="catalog-store-head";
+      const names=document.createElement("div");
+      const name=document.createElement("div");name.className="catalog-store-name";name.textContent=r.nome;
+      const code=document.createElement("div");code.className="catalog-store-code";code.textContent=r.codigo_cadastro;
+      names.append(name,code);
+      const status=document.createElement("span");status.className="catalog-status"+(r.ativa?"":" off");status.textContent=r.ativa?"ATIVA":"INATIVA";
+      header.append(names,status);card.appendChild(header);
+      const metadata=document.createElement("div");metadata.className="catalog-meta";
+      [["LUC",r.luc],["INSTRUMENTO",r.instrumento]].forEach(([label,val])=>{
+        const cell=document.createElement("div");const l=document.createElement("small");l.textContent=label;
+        const value=document.createElement("strong");value.textContent=val||"Não informado";
+        cell.append(l,value);metadata.appendChild(cell);
+      });
+      card.appendChild(metadata);
+      const flags=document.createElement("div");flags.className="catalog-flags";
+      [["NAPP",r.napp],["INFORME",r.informa],["COLETA",r.coleta],["POS",r.pos],["PRESENCIAL",r.presencial]].forEach(([label,yes])=>{
+        const chip=document.createElement("span");
+        chip.className="catalog-flag"+(yes?(label==="COLETA"?" yes focus":" yes"):"");
+        chip.textContent=label+" · "+(yes?"SIM":"NÃO");flags.appendChild(chip);
+      });
+      card.appendChild(flags);fragment.appendChild(card);
+    });
+    grid.appendChild(fragment);
   }
-  q.oninput=draw; draw();v.appendChild(wrap);
+  search.oninput=renderItems;activity.onchange=renderItems;collection.onchange=renderItems;
+  renderItems();v.appendChild(shell);
 }
 
 function renderConsolidado(v){

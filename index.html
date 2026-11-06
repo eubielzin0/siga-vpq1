@@ -1252,8 +1252,8 @@ function renderAcessos(v){
     input.type=type;input.value=value;input.required=true;
     wrap.appendChild(input);form.appendChild(wrap);return input;
   };
-  const name=addField("NOME COMPLETO","Everton Oliveira");
-  const email=addField("LOGIN DO AUDITOR","everton.auditor@bossanovamall.com","email");
+  const name=addField("NOME COMPLETO","");name.placeholder="Nome completo do auditor";
+  const email=addField("LOGIN DO AUDITOR","","email");email.placeholder="primeiro.auditor@bossanovamall.com";
   const roleLabel=document.createElement("label");roleLabel.style.cssText="display:grid;gap:5px;font-size:12px;font-weight:700;color:#4b6652";
   roleLabel.textContent="FUNÇÃO";
   const role=document.createElement("select");role.className="catalog-search";

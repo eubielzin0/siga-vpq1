@@ -597,6 +597,7 @@ svg{display:block}
       <button class="tab" data-v="auditores">Auditores</button>
       <button class="tab" data-v="evidencias">Evidências</button>
       <button class="tab" data-v="cadastro">Lojas BNM</button>
+      <button class="tab" data-v="acessos">Acessos</button>
     </div>
   </div>
   <div class="wrap" style="padding-top:14px">
@@ -1214,8 +1215,90 @@ function renderAdmin(){
   if(admView==="auditores")   return renderAuditores(v);
   if(admView==="evidencias")  return renderEvidencias(v);
   if(admView==="cadastro")     return renderCadastroLojas(v);
+  if(admView==="acessos")      return renderAcessos(v);
 }
 
+
+/* Criação oficial de usuários: função Edge restrita ao papel coordenador.
+   Nunca incluir service_role_key ou senha no repositório ou no localStorage. */
+function generateStrongPassword(){
+  const groups=["ABCDEFGHJKLMNPQRSTUVWXYZ","abcdefghijkmnopqrstuvwxyz","23456789","!@#%_-"];
+  const randomIndex=max=>crypto.getRandomValues(new Uint32Array(1))[0]%max;
+  const all=groups.join("");
+  const chars=groups.map(group=>group[randomIndex(group.length)]);
+  for(let i=0;i<16;i++)chars.push(all[randomIndex(all.length)]);
+  for(let i=chars.length-1;i>0;i--){
+    const j=randomIndex(i+1);[chars[i],chars[j]]=[chars[j],chars[i]];
+  }
+  return chars.join("");
+}
+function renderAcessos(v){
+  v.replaceChildren();
+  if(current.papel!=="coordenador"){
+    const no=document.createElement("div");no.className="catalog-empty";
+    no.textContent="Somente o coordenador pode cadastrar novos usuários.";v.appendChild(no);return;
+  }
+  const shell=document.createElement("section");shell.className="catalog-shell";
+  const h=document.createElement("h2");h.style.cssText="margin:0 0 8px;font-size:20px;color:var(--g-dark)";
+  h.textContent="Gerenciar acessos de auditoria";shell.appendChild(h);
+  const intro=document.createElement("p");intro.style.cssText="font-size:13px;color:#65766a;line-height:1.6;margin:0 0 17px";
+  intro.textContent="Cadastre auditores com permissões limitadas à coleta. O sistema gera uma senha individual forte, exibida uma única vez ao coordenador. A criação é feita pela API oficial de autenticação do Supabase.";
+  shell.appendChild(intro);
+  const form=document.createElement("form");form.style.cssText="display:grid;gap:13px;max-width:570px";
+  const addField=(labelText,value,type="text")=>{
+    const wrap=document.createElement("label");wrap.style.cssText="display:grid;gap:5px;font-size:12px;font-weight:700;color:#4b6652";
+    wrap.textContent=labelText;
+    const input=document.createElement("input");input.className="catalog-search";input.style.width="100%";
+    input.type=type;input.value=value;input.required=true;
+    wrap.appendChild(input);form.appendChild(wrap);return input;
+  };
+  const name=addField("NOME COMPLETO","Everton Oliveira");
+  const email=addField("LOGIN DO AUDITOR","everton.auditor@bossanovamall.com","email");
+  const roleLabel=document.createElement("label");roleLabel.style.cssText="display:grid;gap:5px;font-size:12px;font-weight:700;color:#4b6652";
+  roleLabel.textContent="FUNÇÃO";
+  const role=document.createElement("select");role.className="catalog-search";
+  ["Auditor de Fechamento","Auditor de Coleta","Auditor"].forEach(text=>{
+    const opt=document.createElement("option");opt.value=text;opt.textContent=text;role.appendChild(opt);
+  });roleLabel.appendChild(role);form.appendChild(roleLabel);
+  const create=document.createElement("button");create.type="submit";create.className="fin-btn";
+  create.textContent="Criar conta de auditor e gerar senha";create.style.margin="6px 0 0";
+  form.appendChild(create);
+  const alert=document.createElement("p");alert.style.cssText="display:none;font-size:13px;color:#9b3f3f;margin:0";
+  form.appendChild(alert);
+  const result=document.createElement("div");result.style.cssText="display:none;border:1px solid #d6e3d9;border-radius:13px;padding:17px;background:#eff7f1";
+  form.appendChild(result);
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    if(!confirm("Criar login para "+name.value.trim()+" como "+role.value+"?"))return;
+    alert.style.display="none";result.style.display="none";
+    create.disabled=true;create.textContent="Criando usuário pelo Supabase…";
+    const pass=generateStrongPassword();
+    try{
+      const {data,error}=await sb.functions.invoke("admin-criar-auditor",{
+        body:{nome:name.value.trim(),email:email.value.trim().toLowerCase(),funcao:role.value,senha:pass}
+      });
+      if(error){
+        let explanation=error.message||"Falha ao criar usuário.";
+        try{const response=await error.context?.json();if(response?.error)explanation=response.error;}catch(_){}
+        throw new Error(explanation);
+      }
+      if(!data?.ok)throw new Error(data?.error||"Supabase não confirmou a criação.");
+      result.replaceChildren();
+      const strong=document.createElement("strong");strong.textContent="Conta criada com sucesso — perfil AUDITOR";strong.style.cssText="display:block;color:#305e3e;margin-bottom:12px";
+      const user=document.createElement("div");user.style.cssText="font-size:13px;margin-bottom:8px;overflow-wrap:anywhere";
+      user.textContent="Login: "+data.email;
+      const secret=document.createElement("code");secret.style.cssText="display:block;font-size:15px;font-weight:800;letter-spacing:.025em;color:#23452f;background:white;padding:12px;border-radius:9px;overflow-wrap:anywhere";
+      secret.textContent=pass;
+      const caption=document.createElement("p");caption.style.cssText="font-size:12px;line-height:1.5;color:#526457";
+      caption.textContent="Senha inicial (exibida somente agora). Copie e entregue ao auditor por um canal privado. O endereço precisa existir para recuperação de senha por e-mail.";
+      const copy=document.createElement("button");copy.type="button";copy.className="copy-btn";copy.textContent="Copiar login e senha";
+      copy.onclick=async()=>{try{await navigator.clipboard.writeText(data.email+"\n"+pass);copy.textContent="Copiado";}catch(_){alert("Selecione e copie a senha exibida.");}};
+      result.append(strong,user,secret,caption,copy);result.style.display="block";
+    }catch(err){alert.textContent="Não foi possível criar: "+(err?.message||"erro desconhecido");alert.style.display="block";}
+    finally{create.disabled=false;create.textContent="Criar conta de auditor e gerar senha";}
+  };
+  shell.appendChild(form);v.appendChild(shell);
+}
 
 /* Cadastro de classificação disponibilizado apenas ao perfil coordenador */
 function renderCadastroLojas(v){
